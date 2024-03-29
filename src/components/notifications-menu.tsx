@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 import { Bell, Mail, User, FileText } from "lucide-react";
 import Link from "next/link";
 
@@ -26,7 +27,7 @@ const notifications = [
     title: "Follow-up Needed",
     subtitle: "Saul has missed two meetings in a row",
     icon: User,
-    read: false,
+    read: true,
   },
   {
     id: 3,
@@ -36,6 +37,10 @@ const notifications = [
     read: true,
   },
 ];
+
+const unreadNotifications = notifications.filter(
+  (notification) => notification.read === false,
+);
 
 function markAllRead() {
   console.log("clicked");
@@ -51,21 +56,26 @@ export default function NotificationsMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="relative rounded-full">
-          <Badge className="absolute -right-1.5 -top-1.5 m-0 h-5 w-5 items-center justify-center rounded-full p-0 hover:bg-primary">
-            {
-              notifications.filter(
-                (notification) => notification.read === false,
-              ).length
-            }
-          </Badge>
+          {unreadNotifications.length > 0 ? (
+            <Badge className="absolute -right-1.5 -top-1.5 m-0 h-5 w-5 items-center justify-center rounded-full p-0 hover:bg-primary">
+              {unreadNotifications.length}
+            </Badge>
+          ) : (
+            ""
+          )}
           <Bell className="h-5 w-5" />
           <span className="sr-only">Toggle notifications</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel className="flex items-center justify-between gap-4 py-0.5">
+        <DropdownMenuLabel
+          className={cn(
+            unreadNotifications.length > 0 ? "py-0.5" : "",
+            "flex items-center justify-between gap-4",
+          )}
+        >
           Notifications
-          {notifications.length > 0 ? (
+          {unreadNotifications.length > 0 ? (
             <Button variant={"ghost"} size={"sm"} onClick={markAllRead}>
               Mark all as read
             </Button>
