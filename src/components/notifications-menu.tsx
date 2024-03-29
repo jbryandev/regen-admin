@@ -83,10 +83,10 @@ export default function NotificationsMenu() {
               <div className="flex items-start space-x-4">
                 <notification.icon className="h-5 w-5" />
                 <div className="space-y-1">
-                  <p className="text-sm font-medium leading-none">
+                  <p className="max-w-60 truncate text-sm font-medium leading-none">
                     {notification.title}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="max-w-60 truncate text-sm text-muted-foreground">
                     {notification.subtitle}
                   </p>
                 </div>
