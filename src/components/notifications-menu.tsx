@@ -19,7 +19,6 @@ const notifications = [
     title: "Communication Due",
     subtitle: "Notify mentors of inventory training date",
     icon: Mail,
-    link: "/communications",
     read: false,
   },
   {
@@ -27,41 +26,15 @@ const notifications = [
     title: "Follow-up Needed",
     subtitle: "Saul has missed two meetings in a row",
     icon: User,
-    link: "/participants",
     read: false,
   },
   {
     id: 3,
     title: "Draft Testimony Due",
-    subtitle: "Submit to Testimony Center by December 1",
+    subtitle: "Submit to reviewer by December 1",
     icon: FileText,
-    link: "/testimony",
     read: true,
   },
-  // {
-  //   id: 4,
-  //   title: "Communication Due",
-  //   subtitle: "Notify mentors of inventory training date",
-  //   icon: Mail,
-  //   link: "/communications",
-  //   read: false,
-  // },
-  // {
-  //   id: 5,
-  //   title: "Follow-up Needed",
-  //   subtitle: "Saul has missed two meetings in a row",
-  //   icon: User,
-  //   link: "/participants",
-  //   read: false,
-  // },
-  // {
-  //   id: 6,
-  //   title: "Draft Testimony Due",
-  //   subtitle: "Submit to Testimony Center by December 1",
-  //   icon: FileText,
-  //   link: "/testimony",
-  //   read: true,
-  // },
 ];
 
 function markAllRead() {
@@ -104,7 +77,7 @@ export default function NotificationsMenu() {
         {notifications.slice(0, 5).map((notification) => (
           <DropdownMenuItem key={notification.id} className="flex gap-2">
             <Link
-              href={notification.link}
+              href={`/notifications/${notification.id}`}
               className="flex w-full justify-between space-x-4 p-1 transition-all hover:bg-accent hover:text-accent-foreground"
             >
               <div className="flex items-start space-x-4">
