@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, type LucideProps } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -18,12 +19,29 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 import regen from "/public/ReGen_Icon_Primary.png";
 
 export default function LoginForm() {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isEmailLoading, setIsEmailLoading] = useState<boolean>(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [dialogMessage, setDialogMessage] = useState({
+    title: "",
+    description: "",
+  });
+
+  const router = useRouter();
 
   const formSchema = z.object({
     email: z.string().email(),
@@ -39,13 +57,35 @@ export default function LoginForm() {
     resolver: zodResolver(formSchema),
   });
 
-  async function formSubmit(data: FormData) {
-    setIsLoading(true);
+  async function emailSubmit(data: FormData) {
+    setIsEmailLoading(true);
 
-    await signIn("email", {
+    const loginResult = await signIn("email", {
       email: data.email.toLowerCase(),
+      redirect: false,
       callbackUrl: "/",
     });
+
+    setIsEmailLoading(false);
+
+    if (loginResult?.error) {
+      if (loginResult.error === "AccessDenied") {
+        setDialogMessage({
+          title: "Access Denied",
+          description: "You do not have permission to log in.",
+        });
+      } else {
+        setDialogMessage({
+          title: "Something has gone wrong",
+          description: "Unable to log in. Please try again later.",
+        });
+      }
+
+      setIsDialogOpen(true);
+      return false;
+    }
+
+    return router.push("/auth/verify");
   }
 
   async function googleSubmit() {
@@ -77,7 +117,7 @@ export default function LoginForm() {
         <CardContent>
           <div className="flex flex-col gap-4">
             <form
-              onSubmit={handleSubmit(formSubmit)}
+              onSubmit={handleSubmit(emailSubmit)}
               className="flex flex-col gap-4"
             >
               <div className="flex flex-col gap-2">
@@ -95,8 +135,14 @@ export default function LoginForm() {
                   </p>
                 )}
               </div>
-              <Button className="w-full" disabled={isLoading} type="submit">
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Button
+                className="w-full"
+                disabled={isEmailLoading}
+                type="submit"
+              >
+                {isEmailLoading && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
                 Log in with email
               </Button>
             </form>
@@ -128,6 +174,20 @@ export default function LoginForm() {
           </div>
         </CardContent>
       </Card>
+      <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <AlertDialogTrigger />
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{dialogMessage.title}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {dialogMessage.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction>Ok</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

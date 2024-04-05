@@ -51,10 +51,10 @@ export const authOptions: NextAuthOptions = {
 
       if (account?.provider === "google") {
         email = profile?.email ?? "";
-      }
-
-      if (account?.provider === "email") {
+      } else if (account?.provider === "email") {
         email = user?.email ?? "";
+      } else {
+        return false;
       }
 
       // Only existing users can sign in
@@ -97,6 +97,8 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: "/login",
+    error: "/auth/error",
+    verifyRequest: "auth/verify",
   },
 };
 

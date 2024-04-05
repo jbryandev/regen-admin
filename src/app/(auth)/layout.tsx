@@ -1,10 +1,11 @@
+import { type Metadata } from "next";
+import { Inter } from "next/font/google";
+
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "@/styles/globals.css";
 import { TRPCReactProvider } from "@/trpc/react";
-import { type Metadata } from "next";
-import { Inter } from "next/font/google";
 
 const inter = Inter({
   subsets: ["latin"],
