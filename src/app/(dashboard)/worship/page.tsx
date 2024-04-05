@@ -1,4 +1,4 @@
-import SortableGrid from "@/app/worship/sortable-grid";
+import SortableGrid from "@/app/(dashboard)/worship/sortable-grid";
 
 export interface Song {
   id: string;

@@ -11,6 +11,7 @@ import {
   Star,
   HeartHandshake,
   Menu,
+  KeyRound,
 } from "lucide-react";
 import Link from "next/link";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -27,9 +28,9 @@ export const navigation = [
     path: "/",
   },
   {
-    title: "Participants",
+    title: "Group",
     icon: Users,
-    path: "/participants",
+    path: "/groups",
   },
   {
     title: "Attendance",
@@ -65,6 +66,11 @@ export const navigation = [
     title: "Worship",
     icon: Music,
     path: "/worship",
+  },
+  {
+    title: "Roles",
+    icon: KeyRound,
+    path: "/roles",
   },
 ];
 

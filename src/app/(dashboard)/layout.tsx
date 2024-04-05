@@ -1,19 +1,24 @@
 import "@/styles/globals.css";
 
+import { Search } from "lucide-react";
 import { Inter } from "next/font/google";
+import Image from "next/image";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
-import { TRPCReactProvider } from "@/trpc/react";
+import DisplayMenu from "@/components/display-menu";
+import { MobileNav, SidebarNav } from "@/components/navigation";
+import NotificationsMenu from "@/components/notifications-menu";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
-import Link from "next/link";
-import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+
 import regen from "/public/ReGen_Icon_Primary.png";
-import Image from "next/image";
-import NotificationsMenu from "@/components/notifications-menu";
-import DisplayMenu from "@/components/display-menu";
+
+import { Toaster } from "@/components/ui/sonner";
 import UserMenu from "@/components/user-menu";
-import { MobileNav, SidebarNav } from "@/components/navigation";
+import { getServerAuthSession } from "@/server/auth";
+import { TRPCReactProvider } from "@/trpc/react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,11 +31,17 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Require users to be logged in to access all parts of application
+  const session = await getServerAuthSession();
+  if (!session?.user) {
+    redirect("/login");
+  }
+
   return (
     <html lang="en">
       <body className={`font-sans ${inter.variable} h-full`}>
@@ -80,6 +91,7 @@ export default function RootLayout({
                 {children}
               </div>
             </div>
+            <Toaster visibleToasts={3} />
             <TailwindIndicator />
           </ThemeProvider>
         </TRPCReactProvider>

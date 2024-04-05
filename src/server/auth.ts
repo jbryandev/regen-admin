@@ -5,6 +5,7 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
+import EmailProvider from "next-auth/providers/email";
 import GoogleProvider from "next-auth/providers/google";
 
 import { env } from "@/env";
@@ -21,7 +22,7 @@ declare module "next-auth" {
     user: {
       id: string;
       // ...other properties
-      // role: UserRole;
+      // role: Role;
     } & DefaultSession["user"];
   }
 
@@ -45,12 +46,44 @@ export const authOptions: NextAuthOptions = {
         id: user.id,
       },
     }),
+    signIn: async ({ user, account, profile }) => {
+      let email = "";
+
+      if (account?.provider === "google") {
+        email = profile?.email ?? "";
+      }
+
+      if (account?.provider === "email") {
+        email = user?.email ?? "";
+      }
+
+      // Only existing users can sign in
+      const existingAccount = await db.user.findFirst({
+        where: { email },
+      });
+      if (existingAccount) {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   adapter: PrismaAdapter(db) as Adapter,
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
+    }),
+    EmailProvider({
+      server: {
+        host: process.env.EMAIL_SERVER_HOST,
+        port: process.env.EMAIL_SERVER_PORT,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD,
+        },
+      },
+      from: process.env.EMAIL_FROM,
     }),
     /**
      * ...add more providers here.
@@ -62,6 +95,9 @@ export const authOptions: NextAuthOptions = {
      * @see https://next-auth.js.org/providers/github
      */
   ],
+  pages: {
+    signIn: "/login",
+  },
 };
 
 /**

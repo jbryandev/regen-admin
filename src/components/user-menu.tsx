@@ -1,3 +1,8 @@
+"use client";
+
+import { CircleUser, LogIn, LogOut, Settings, User } from "lucide-react";
+import { signOut } from "next-auth/react";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,7 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CircleUser, PowerCircle, Settings, User } from "lucide-react";
+
+const signedIn = true;
 
 export default function UserMenu() {
   return (
@@ -19,21 +25,33 @@ export default function UserMenu() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem className="flex cursor-pointer gap-4">
-          <User className="h-5 w-5" />
-          Profile
-        </DropdownMenuItem>
-        <DropdownMenuItem className="flex cursor-pointer gap-4">
-          <Settings className="h-5 w-5" />
-          Settings
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem className="flex cursor-pointer gap-4">
-          <PowerCircle className="h-5 w-5" />
-          Logout
-        </DropdownMenuItem>
+        {signedIn ? (
+          <>
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="flex cursor-pointer gap-4">
+              <User className="h-5 w-5" />
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem className="flex cursor-pointer gap-4">
+              <Settings className="h-5 w-5" />
+              Settings
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="flex cursor-pointer gap-4"
+              onClick={() => signOut()}
+            >
+              <LogOut className="h-5 w-5" />
+              Log out
+            </DropdownMenuItem>
+          </>
+        ) : (
+          <DropdownMenuItem className="flex cursor-pointer gap-4">
+            <LogIn className="h-5 w-5" />
+            Log in
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
