@@ -19,35 +19,20 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 import regen from "/public/ReGen_Icon_Primary.png";
 
 export default function LoginForm() {
   const [isEmailLoading, setIsEmailLoading] = useState<boolean>(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
-  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [dialogMessage, setDialogMessage] = useState({
-    title: "",
-    description: "",
-  });
-
-  const router = useRouter();
 
   const formSchema = z.object({
     email: z.string().email(),
   });
 
   type FormData = z.infer<typeof formSchema>;
+
+  const router = useRouter();
 
   const {
     register,
@@ -66,26 +51,11 @@ export default function LoginForm() {
       callbackUrl: "/",
     });
 
-    setIsEmailLoading(false);
-
     if (loginResult?.error) {
-      if (loginResult.error === "AccessDenied") {
-        setDialogMessage({
-          title: "Access Denied",
-          description: "You do not have permission to log in.",
-        });
-      } else {
-        setDialogMessage({
-          title: "Something has gone wrong",
-          description: "Unable to log in. Please try again later.",
-        });
-      }
-
-      setIsDialogOpen(true);
-      return false;
+      router.push(`/login?error=${loginResult.error}`);
+    } else {
+      router.push("/login?verify=1");
     }
-
-    return router.push("/auth/verify");
   }
 
   async function googleSubmit() {
@@ -97,98 +67,78 @@ export default function LoginForm() {
   }
 
   return (
-    <>
-      <Card className="mx-auto max-w-sm">
-        <CardHeader>
-          <Image
-            src={regen}
-            alt="Regen logo"
-            height={30}
-            className="my-5 self-center"
-          />
-          <CardTitle className="text-center text-2xl">
-            Re:Generation Admin
-          </CardTitle>
-          <CardDescription className="text-center">
-            Please enter your email below to log in to your account. A log in
-            link will be emailed to you.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col gap-4">
-            <form
-              onSubmit={handleSubmit(emailSubmit)}
-              className="flex flex-col gap-4"
-            >
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  required
-                  {...register("email")}
-                />
-                {errors?.email && (
-                  <p className="px-1 text-sm text-red-600">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-              <Button
-                className="w-full"
-                disabled={isEmailLoading}
-                type="submit"
-              >
-                {isEmailLoading && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Log in with email
-              </Button>
-            </form>
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with
-                </span>
-              </div>
-            </div>
+    <Card className="mx-auto max-w-sm">
+      <CardHeader>
+        <Image
+          src={regen}
+          alt="Regen logo"
+          height={30}
+          className="my-5 self-center"
+        />
+        <CardTitle className="text-center text-2xl">
+          Re:Generation Admin
+        </CardTitle>
+        <CardDescription className="text-center">
+          Please enter your email below to log in to your account. A log in link
+          will be emailed to you.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col gap-4">
+          <form
+            onSubmit={handleSubmit(emailSubmit)}
+            className="flex flex-col gap-4"
+          >
             <div className="flex flex-col gap-2">
-              <Button
-                variant="outline"
-                className="w-full"
-                disabled={isGoogleLoading}
-                onClick={googleSubmit}
-              >
-                {isGoogleLoading && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                <GoogleIcon className="mr-2 h-4 w-4" />
-                Google
-              </Button>
-              {/* Add other providers here */}
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="name@example.com"
+                required
+                {...register("email")}
+              />
+              {errors?.email && (
+                <p className="px-1 text-sm text-red-600">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+            <Button className="w-full" disabled={isEmailLoading} type="submit">
+              {isEmailLoading && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Log in with email
+            </Button>
+          </form>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with
+              </span>
             </div>
           </div>
-        </CardContent>
-      </Card>
-      <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <AlertDialogTrigger />
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{dialogMessage.title}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {dialogMessage.description}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction>Ok</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+          <div className="flex flex-col gap-2">
+            <Button
+              variant="outline"
+              className="w-full"
+              disabled={isGoogleLoading}
+              onClick={googleSubmit}
+            >
+              {isGoogleLoading && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              <GoogleIcon className="mr-2 h-4 w-4" />
+              Google
+            </Button>
+            {/* Add other providers here */}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
