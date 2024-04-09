@@ -43,11 +43,8 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en">
-      <body
-        className={`font-sans ${inter.variable} h-full`}
-        suppressHydrationWarning
-      >
+    <html lang="en" suppressHydrationWarning>
+      <body className={`font-sans ${inter.variable} h-full`}>
         <TRPCReactProvider>
           <ThemeProvider
             attribute="class"

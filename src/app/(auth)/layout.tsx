@@ -24,11 +24,8 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body
-        className={`font-sans ${inter.variable} h-full bg-muted`}
-        suppressHydrationWarning
-      >
+    <html lang="en" suppressHydrationWarning>
+      <body className={`font-sans ${inter.variable} h-full bg-muted`}>
         <TRPCReactProvider>
           <ThemeProvider
             attribute="class"

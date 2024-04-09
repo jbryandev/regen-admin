@@ -12,7 +12,7 @@ const config = {
   ],
   rules: {
     "import/order": [
-      "error",
+      "warn",
       {
         groups: [
           "builtin",
@@ -53,6 +53,7 @@ const config = {
         },
       },
     ],
+    "@typescript-eslint/prefer-nullish-coalescing": "off",
   },
 };
 module.exports = config;
