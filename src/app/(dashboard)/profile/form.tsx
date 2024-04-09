@@ -128,6 +128,14 @@ const ProfileForm = () => {
             )}
           />
         </div>
+        <Button
+          type="reset"
+          variant={"secondary"}
+          className="mr-4"
+          onClick={() => form.reset()}
+        >
+          Reset
+        </Button>
         <Button type="submit" disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Update profile
