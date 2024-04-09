@@ -18,5 +18,10 @@ export const userSchema = z.object({
       message: "Last name must not be longer than 30 characters.",
     }),
   email: z.string().email(),
-  phone: z.string().length(10),
+  phone: z
+    .string()
+    .regex(
+      /^\d{10}$/,
+      "Phone number must be exactly 10 digits long and contain only numbers.",
+    ),
 });
