@@ -9,7 +9,7 @@ export const userRouter = createTRPCRouter({
       },
     });
   }),
-  getUserProfile: protectedProcedure.query(async ({ ctx }) => {
+  getProfile: protectedProcedure.query(async ({ ctx }) => {
     return await ctx.db.user.findUnique({
       where: {
         id: ctx.session.user.id,
@@ -22,14 +22,15 @@ export const userRouter = createTRPCRouter({
       },
     });
   }),
-  update: protectedProcedure
+  updateProfile: protectedProcedure
     .input(userSchema)
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.user.update({
+      return await ctx.db.user.update({
         where: { id: ctx.session.user.id },
         data: {
           ...input,
         },
+        select: { firstName: true, lastName: true, email: true, phone: true },
       });
     }),
 });

@@ -1,6 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
@@ -21,15 +23,22 @@ import { api } from "@/trpc/react";
 type ProfileFormValues = z.infer<typeof userSchema>;
 
 const ProfileForm = () => {
-  const user = api.user.getUserProfile.useQuery().data;
+  const [isLoading, setIsLoading] = useState(false);
 
-  // const updateUser = api.user.update.useMutation({
-  // onSuccess: () => {
-  //   toast("Profile updated!", {
-  //     description: JSON.stringify(data, null, 2),
-  //   });
-  // },
-  // });
+  const user = api.user.getProfile.useQuery().data;
+
+  const updateUser = api.user.updateProfile.useMutation({
+    onSuccess: () => {
+      setIsLoading(false);
+      toast("Profile updated!");
+    },
+    onError: (error) => {
+      setIsLoading(false);
+      toast("Error updating profile", {
+        description: error.message,
+      });
+    },
+  });
 
   const defaultValues = {
     firstName: "",
@@ -53,10 +62,8 @@ const ProfileForm = () => {
   });
 
   function onSubmit(data: ProfileFormValues) {
-    // updateUser.mutate(data);
-    toast("Profile updated!", {
-      description: JSON.stringify(data, null, 2),
-    });
+    setIsLoading(true);
+    updateUser.mutate(data);
   }
 
   return (
@@ -121,7 +128,10 @@ const ProfileForm = () => {
             )}
           />
         </div>
-        <Button type="submit">Update profile</Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          Update profile
+        </Button>
       </form>
     </Form>
   );
