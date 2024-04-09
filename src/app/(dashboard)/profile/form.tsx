@@ -21,7 +21,7 @@ import { api } from "@/trpc/react";
 type ProfileFormValues = z.infer<typeof userSchema>;
 
 const ProfileForm = () => {
-  const user = api.user.get.useQuery().data;
+  const user = api.user.getUserProfile.useQuery().data;
 
   // const updateUser = api.user.update.useMutation({
   // onSuccess: () => {

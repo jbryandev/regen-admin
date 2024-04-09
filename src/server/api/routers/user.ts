@@ -9,6 +9,19 @@ export const userRouter = createTRPCRouter({
       },
     });
   }),
+  getUserProfile: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.user.findUnique({
+      where: {
+        id: ctx.session.user.id,
+      },
+      select: {
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+      },
+    });
+  }),
   update: protectedProcedure
     .input(userSchema)
     .mutation(async ({ ctx, input }) => {
