@@ -13,12 +13,16 @@ import {
   Menu,
   KeyRound,
 } from "lucide-react";
-import Link from "next/link";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import regen from "/public/ReGen_Icon_Primary.png";
 import Image from "next/image";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+
+import regen from "/public/ReGen_Icon_Primary.png";
+
 import { cn } from "@/lib/utils";
 
 export const navigation = [
@@ -98,9 +102,10 @@ export function SidebarNav() {
 
 export function MobileNav() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button variant="outline" size="icon" className="shrink-0 md:hidden">
           <Menu className="h-5 w-5" />
@@ -124,6 +129,7 @@ export function MobileNav() {
                 pathname === item.path ? "bg-muted" : "",
                 "mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground",
               )}
+              onClick={() => setIsOpen(!isOpen)}
             >
               <item.icon className="h-5 w-5" />
               {item.title}
