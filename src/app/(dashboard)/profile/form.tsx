@@ -68,11 +68,8 @@ const ProfileForm = () => {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 xs:space-y-8"
-      >
-        <div className="grid w-full gap-4 xs:grid-cols-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <div className="grid w-full max-w-3xl gap-4 xs:grid-cols-2">
           <FormField
             control={form.control}
             name="firstName"
@@ -99,8 +96,6 @@ const ProfileForm = () => {
               </FormItem>
             )}
           />
-        </div>
-        <div className="grid w-full gap-4 xs:grid-cols-2">
           <FormField
             control={form.control}
             name="email"
