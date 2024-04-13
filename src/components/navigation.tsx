@@ -2,7 +2,6 @@
 
 import {
   Home,
-  NotebookPen,
   Users,
   Video,
   Mail,
@@ -12,6 +11,7 @@ import {
   HeartHandshake,
   Menu,
   KeyRound,
+  UserCheck,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,7 +38,7 @@ export const navigation = [
   },
   {
     title: "Attendance",
-    icon: NotebookPen,
+    icon: UserCheck,
     path: "/attendance",
   },
   {
