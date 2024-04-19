@@ -1,6 +1,6 @@
 "use client";
 
-import SortableCard from "@/app/(dashboard)/worship/sortable-card";
+import SortableCard from "@/app/(app)/worship/sortable-card";
 import {
   DndContext,
   closestCenter,

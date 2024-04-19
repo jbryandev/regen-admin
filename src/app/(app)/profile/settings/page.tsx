@@ -1,4 +1,4 @@
-import SettingsForm from "@/app/(dashboard)/profile/settings/form";
+import SettingsForm from "@/app/(app)/profile/settings/form";
 
 const SettingsPage = () => {
   return (

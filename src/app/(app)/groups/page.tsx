@@ -1,4 +1,4 @@
-import { columns } from "@/app/(dashboard)/groups/columns";
+import { columns } from "@/app/(app)/groups/columns";
 import { DataTable } from "@/components/ui/data-table";
 import { participants } from "@/lib/data";
 

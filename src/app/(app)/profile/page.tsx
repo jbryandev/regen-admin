@@ -1,4 +1,4 @@
-import ProfileForm from "@/app/(dashboard)/profile/form";
+import ProfileForm from "@/app/(app)/profile/form";
 
 const ProfilePage = () => {
   return (

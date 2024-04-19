@@ -24,6 +24,12 @@ const config = {
         ...defaultTheme.screens,
       },
       colors: {
+        regen: {
+          primary: "#A9C23F",
+          secondary: "#48565A",
+          background: "#F2F0EC",
+          red: "#B1443C",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

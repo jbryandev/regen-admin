@@ -84,7 +84,7 @@ export default async function RootLayout({
                       </div>
                     </form>
                   </div>
-                  <NotificationsMenu />
+                  {/* <NotificationsMenu /> */}
                   <DisplayMenu />
                   <UserMenu />
                 </header>

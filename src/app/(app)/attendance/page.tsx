@@ -1,4 +1,4 @@
-import { columns } from "@/app/(dashboard)/attendance/columns";
+import { columns } from "@/app/(app)/attendance/columns";
 import { DataTable } from "@/components/ui/data-table";
 import { participants } from "@/lib/data";
 
