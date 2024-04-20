@@ -9,10 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-import regen from "/public/ReGen_Icon_Primary.png";
-
 import { cn } from "@/lib/utils";
+
+import regen from "@/public/ReGen_Icon_Primary.png";
 
 const VerificationCard = async () => {
   return (

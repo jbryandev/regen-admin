@@ -20,7 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import regen from "/public/ReGen_Icon_Primary.png";
+import regen from "@/public/ReGen_Icon_Primary.png";
 
 export default function LoginForm() {
   const [isEmailLoading, setIsEmailLoading] = useState<boolean>(false);

@@ -4,8 +4,8 @@ import { Inter } from "next/font/google";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+
 import "@/styles/globals.css";
-import { TRPCReactProvider } from "@/trpc/react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,18 +26,16 @@ export default function AuthLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans ${inter.variable} h-full bg-muted`}>
-        <TRPCReactProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <TailwindIndicator />
-            <Toaster visibleToasts={3} />
-          </ThemeProvider>
-        </TRPCReactProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <TailwindIndicator />
+          <Toaster visibleToasts={3} />
+        </ThemeProvider>
       </body>
     </html>
   );

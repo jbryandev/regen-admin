@@ -1,4 +1,4 @@
-import { PrismaAdapter } from "@auth/prisma-adapter";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import {
   getServerSession,
   type DefaultSession,
@@ -10,6 +10,7 @@ import GoogleProvider from "next-auth/providers/google";
 
 import { env } from "@/env";
 import { db } from "@/server/db";
+import { createTable } from "@/server/db/schema";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -58,8 +59,8 @@ export const authOptions: NextAuthOptions = {
       }
 
       // Only existing users can sign in
-      const existingAccount = await db.user.findFirst({
-        where: { email },
+      const existingAccount = await db.query.users.findFirst({
+        where: (model, { eq }) => eq(model.email, email),
       });
       if (existingAccount) {
         return true;
@@ -68,7 +69,7 @@ export const authOptions: NextAuthOptions = {
       }
     },
   },
-  adapter: PrismaAdapter(db) as Adapter,
+  adapter: DrizzleAdapter(db, createTable) as Adapter,
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,

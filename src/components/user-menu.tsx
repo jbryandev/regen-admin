@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 
+import ModeToggle from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,13 +15,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { api } from "@/trpc/react";
 
 const signedIn = true;
 
-const UserMenu = () => {
-  const user = api.user.get.useQuery().data;
+type UserMenuProps = {
+  image?: string | null;
+  name?: string | null;
+};
 
+const UserMenu = ({ user }: { user: UserMenuProps }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -29,8 +32,8 @@ const UserMenu = () => {
           size="icon"
           className="relative rounded-full"
         >
-          {user?.image ? (
-            <Image src={user?.image} alt="Profile image" fill />
+          {user.image ? (
+            <Image src={user.image} alt="Profile image" fill />
           ) : (
             <CircleUser className="h-5 w-5" />
           )}
@@ -40,7 +43,7 @@ const UserMenu = () => {
       <DropdownMenuContent align="end">
         {signedIn ? (
           <>
-            <DropdownMenuLabel>{`${user?.firstName} ${user?.lastName}`}</DropdownMenuLabel>
+            <DropdownMenuLabel>{`${user.name}`}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/profile" className="flex cursor-pointer gap-4">

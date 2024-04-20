@@ -20,10 +20,8 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-
-import regen from "/public/ReGen_Icon_Primary.png";
-
 import { cn } from "@/lib/utils";
+import regen from "@/public/ReGen_Icon_Primary.png";
 
 export const navigation = [
   {

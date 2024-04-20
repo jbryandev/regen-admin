@@ -1,7 +1,8 @@
 "use client";
 
-import * as React from "react";
+import { CheckIcon, Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,10 +13,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CheckIcon, Monitor, Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export default function DisplayMenu() {
+const ModeToggle = () => {
   const { setTheme } = useTheme();
 
   return (
@@ -28,8 +28,6 @@ export default function DisplayMenu() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Display</DropdownMenuLabel>
-        <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => setTheme("light")}
           className="flex w-full cursor-pointer items-center justify-between"
@@ -78,4 +76,6 @@ export default function DisplayMenu() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+};
+
+export default ModeToggle;

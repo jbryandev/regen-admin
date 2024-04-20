@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { userSchema } from "@/lib/schema";
-import { api } from "@/trpc/react";
 
 type ProfileFormValues = z.infer<typeof userSchema>;
 
