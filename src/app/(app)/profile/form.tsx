@@ -1,5 +1,6 @@
 "use client";
 
+import parsePhoneNumberFromString, { AsYouType } from "libphonenumber-js";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useFormState, useFormStatus } from "react-dom";
@@ -41,6 +42,18 @@ const ProfileForm = ({ user }: { user: ProfileFormProps }) => {
     }
   }, [formState]);
 
+  const formattedPhone = parsePhoneNumberFromString(
+    user.phone,
+    "US",
+  )?.formatNational();
+
+  const handleOnInput = (event: React.FormEvent<HTMLInputElement>) => {
+    const asYouType = new AsYouType("US");
+    const value = event.currentTarget.value;
+    const formattedValue = asYouType.input(value);
+    event.currentTarget.value = formattedValue;
+  };
+
   return (
     <form action={formAction}>
       <div className="space-y-8">
@@ -72,7 +85,9 @@ const ProfileForm = ({ user }: { user: ProfileFormProps }) => {
               type="text"
               id="phone"
               name="phone"
-              defaultValue={user.phone}
+              defaultValue={formattedPhone}
+              onInput={handleOnInput}
+              maxLength={14}
             />
           </div>
         </div>
