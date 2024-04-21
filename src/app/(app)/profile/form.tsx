@@ -51,7 +51,7 @@ const ProfileForm = ({ user }: { user: ProfileFormProps }) => {
               type="text"
               id="name"
               name="name"
-              defaultValue={user.name}
+              defaultValue={user.name ?? ""}
               minLength={1}
               maxLength={50}
             />
