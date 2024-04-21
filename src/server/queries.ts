@@ -7,21 +7,22 @@ import { type userProfileSchema, users } from "@/server/db/schema";
 
 import "server-only";
 
+type UserProfileProps = z.infer<typeof userProfileSchema>;
+
 const getUserProfile = async () => {
   const session = await getServerAuthSession();
   if (!session) throw new Error("Unauthorized");
 
   const user = await db.query.users.findFirst({
     where: (model, { eq }) => eq(model.id, session.user.id),
+    columns: { name: true, email: true, phone: true },
   });
   if (!user) throw new Error("Unauthorized");
 
-  return { name: user.name, email: user.email, phone: user.phone };
+  return user as UserProfileProps;
 };
 
-type UpdateUserProfileProps = z.infer<typeof userProfileSchema>;
-
-const updateUserProfile = async (data: UpdateUserProfileProps) => {
+const updateUserProfile = async (data: UserProfileProps) => {
   const session = await getServerAuthSession();
   if (!session) throw new Error("Unauthorized");
 
