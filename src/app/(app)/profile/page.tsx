@@ -1,6 +1,8 @@
 import ProfileForm from "@/app/(app)/profile/form";
+import { getUserProfile } from "@/server/queries";
 
-const ProfilePage = () => {
+const ProfilePage = async () => {
+  const user = await getUserProfile();
   return (
     <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
       <div className="border-b pb-4">
@@ -9,7 +11,7 @@ const ProfilePage = () => {
           Manage your personal and contact information
         </h2>
       </div>
-      <ProfileForm />
+      <ProfileForm user={user} />
     </main>
   );
 };

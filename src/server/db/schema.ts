@@ -11,6 +11,7 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import type { AdapterAccount } from "next-auth/adapters";
 
 /**
@@ -23,12 +24,13 @@ export const createTable = pgTableCreator((name) => `regen_${name}`);
 
 export const users = createTable("user", {
   id: varchar("id", { length: 255 }).notNull().primaryKey(),
-  name: varchar("name", { length: 255 }),
+  name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull(),
   emailVerified: timestamp("emailVerified", {
     mode: "date",
   }).default(sql`CURRENT_TIMESTAMP`),
   image: varchar("image", { length: 255 }),
+  phone: varchar("phone", { length: 10 }).notNull(),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -85,6 +87,14 @@ export const sessions = createTable(
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
 }));
+
+// Schemas
+export const userSchema = createSelectSchema(users);
+export const userProfileSchema = userSchema.pick({
+  name: true,
+  email: true,
+  phone: true,
+});
 
 // Had to comment this out because Drizzle Studio was throwing error
 // export const verificationTokens = createTable(

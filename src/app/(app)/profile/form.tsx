@@ -1,141 +1,74 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useFormState, useFormStatus } from "react-dom";
 import { toast } from "sonner";
 import { type z } from "zod";
 
+import { updateUserProfile } from "@/app/(app)/profile/actions";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { userSchema } from "@/lib/schema";
+import { Label } from "@/components/ui/label";
+import { type userProfileSchema } from "@/server/db/schema";
 
-type ProfileFormValues = z.infer<typeof userSchema>;
-
-const ProfileForm = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const user = api.user.getProfile.useQuery().data;
-
-  const updateUser = api.user.updateProfile.useMutation({
-    onSuccess: () => {
-      setIsLoading(false);
-      toast("Profile updated!");
-    },
-    onError: (error) => {
-      setIsLoading(false);
-      toast("Error updating profile", {
-        description: error.message,
-      });
-    },
-  });
-
-  const defaultValues = {
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-  };
-
-  const values = {
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    email: user?.email || "",
-    phone: user?.phone || "",
-  };
-
-  const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(userSchema),
-    defaultValues,
-    values,
-    mode: "onChange",
-  });
-
-  function onSubmit(data: ProfileFormValues) {
-    setIsLoading(true);
-    updateUser.mutate(data);
-  }
+const SubmitButton = () => {
+  const { pending } = useFormStatus();
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="grid w-full max-w-3xl gap-4 xs:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="firstName"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>First Name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="lastName"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Last Name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="phone"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Phone</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <Button type="submit" disabled={pending} className="flex gap-2">
+      {pending && <Loader2 className="h-4 w-4 animate-spin" />}
+      Update profile
+    </Button>
+  );
+};
+
+type ProfileFormProps = z.infer<typeof userProfileSchema>;
+
+const ProfileForm = ({ user }: { user: ProfileFormProps }) => {
+  const [formState, formAction] = useFormState(updateUserProfile, {
+    success: false,
+    message: "",
+  });
+
+  useEffect(() => {
+    if (formState.success && formState.message) {
+      toast.success(formState.message);
+    } else if (!formState.success && formState.message) {
+      toast.error(formState.message);
+    }
+  }, [formState]);
+
+  return (
+    <form action={formAction}>
+      <div className="space-y-8">
+        <div className="flex max-w-md flex-col gap-8">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="name">Name</Label>
+            <Input type="text" id="name" name="name" defaultValue={user.name} />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              type="text"
+              id="email"
+              name="email"
+              defaultValue={user.email}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="phone">Phone</Label>
+            <Input
+              type="text"
+              id="phone"
+              name="phone"
+              defaultValue={user.phone}
+            />
+          </div>
         </div>
-        <Button
-          type="reset"
-          variant={"secondary"}
-          className="mr-4"
-          onClick={() => form.reset()}
-        >
-          Reset
-        </Button>
-        <Button type="submit" disabled={isLoading}>
-          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Update profile
-        </Button>
-      </form>
-    </Form>
+        <SubmitButton />
+      </div>
+    </form>
   );
 };
 
