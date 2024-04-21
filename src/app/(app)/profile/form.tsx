@@ -35,7 +35,9 @@ const ProfileForm = ({ user }: { user: ProfileFormProps }) => {
     if (formState.success && formState.message) {
       toast.success(formState.message);
     } else if (!formState.success && formState.message) {
-      toast.error(formState.message);
+      toast.error("Unable to update profile", {
+        description: formState.message,
+      });
     }
   }, [formState]);
 
@@ -45,15 +47,23 @@ const ProfileForm = ({ user }: { user: ProfileFormProps }) => {
         <div className="flex max-w-md flex-col gap-8">
           <div className="flex flex-col gap-2">
             <Label htmlFor="name">Name</Label>
-            <Input type="text" id="name" name="name" defaultValue={user.name} />
+            <Input
+              type="text"
+              id="name"
+              name="name"
+              defaultValue={user.name}
+              minLength={1}
+              maxLength={50}
+            />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
-              type="text"
+              type="email"
               id="email"
               name="email"
               defaultValue={user.email}
+              required
             />
           </div>
           <div className="flex flex-col gap-2">

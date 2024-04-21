@@ -13,6 +13,9 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import type { AdapterAccount } from "next-auth/adapters";
+import { z } from "zod";
+
+import { zPhone } from "@/lib/utils";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -24,13 +27,13 @@ export const createTable = pgTableCreator((name) => `regen_${name}`);
 
 export const users = createTable("user", {
   id: varchar("id", { length: 255 }).notNull().primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }),
   email: varchar("email", { length: 255 }).notNull(),
   emailVerified: timestamp("emailVerified", {
     mode: "date",
   }).default(sql`CURRENT_TIMESTAMP`),
   image: varchar("image", { length: 255 }),
-  phone: varchar("phone", { length: 10 }).notNull(),
+  phone: varchar("phone", { length: 15 }),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -88,26 +91,30 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
 }));
 
+export const verificationTokens = createTable(
+  "verificationToken",
+  {
+    identifier: varchar("identifier", { length: 255 }).notNull(),
+    token: varchar("token", { length: 255 }).notNull(),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
+  },
+  (vt) => ({
+    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+  }),
+);
+
 // Schemas
 export const userSchema = createSelectSchema(users);
-export const userProfileSchema = userSchema.pick({
-  name: true,
-  email: true,
-  phone: true,
-});
-
-// Had to comment this out because Drizzle Studio was throwing error
-// export const verificationTokens = createTable(
-//   "verificationToken",
-//   {
-//     identifier: varchar("identifier", { length: 255 }).notNull(),
-//     token: varchar("token", { length: 255 }).notNull(),
-//     expires: timestamp("expires", { mode: "date" }).notNull(),
-//   },
-//   (vt) => ({
-//     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-//   }),
-// );
+export const userProfileSchema = userSchema
+  .pick({
+    name: true,
+    email: true,
+    phone: true,
+  })
+  .extend({
+    email: z.string().email(),
+    phone: zPhone,
+  });
 
 // Old PRISMA schema
 

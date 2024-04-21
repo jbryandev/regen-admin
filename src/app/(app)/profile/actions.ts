@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { fromZodError } from "zod-validation-error";
 
 import { userProfileSchema } from "@/server/db/schema";
 import { updateUserProfile as updateProfile } from "@/server/queries";
@@ -19,17 +20,20 @@ const updateUserProfile = async (
   });
 
   if (!parse.success) {
-    return { success: false, message: "Failed to update profile" };
+    const message = fromZodError(parse.error).toString();
+    return { success: false, message: message };
   }
 
-  const data = parse.data;
-
   try {
-    await updateProfile(data);
+    await updateProfile(parse.data);
     revalidatePath("/profile");
     return { success: true, message: "Successfully updated profile" };
-  } catch (e) {
-    return { success: false, message: "Failed to update profile" };
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return { success: false, message: error.message };
+    } else {
+      return { success: false, message: "Unknown error" };
+    }
   }
 };
 
