@@ -1,4 +1,4 @@
-import SettingsForm from "@/app/(app)/profile/settings/form";
+// import SettingsForm from "@/app/(app)/profile/settings/form";
 
 const SettingsPage = () => {
   return (
@@ -9,7 +9,7 @@ const SettingsPage = () => {
           Manage your application settings and notifications
         </h2>
       </div>
-      <SettingsForm />
+      {/* <SettingsForm /> */}
     </main>
   );
 };

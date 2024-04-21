@@ -51,7 +51,7 @@ const UserMenu = ({ user }: { user: UserMenuProps }) => {
                 Profile
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild disabled={true}>
               <Link
                 href="/profile/settings"
                 className="flex cursor-pointer gap-4"
