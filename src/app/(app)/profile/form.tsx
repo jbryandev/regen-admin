@@ -10,7 +10,13 @@ import { updateUserProfile } from "@/app/(app)/profile/actions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import SubmitButton from "@/components/ui/submit-button";
-import { type userProfileSchema } from "@/server/db/schema";
+import { userSchema } from "@/server/db/schema";
+
+const userProfileSchema = userSchema.pick({
+  name: true,
+  email: true,
+  phone: true,
+});
 
 type ProfileFormProps = z.infer<typeof userProfileSchema>;
 

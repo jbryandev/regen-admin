@@ -104,17 +104,10 @@ export const verificationTokens = createTable(
 );
 
 // Schemas
-export const userSchema = createSelectSchema(users);
-export const userProfileSchema = userSchema
-  .pick({
-    name: true,
-    email: true,
-    phone: true,
-  })
-  .extend({
-    email: z.string().email(),
-    phone: zPhone,
-  });
+export const userSchema = createSelectSchema(users).extend({
+  email: z.string().email(),
+  phone: zPhone,
+});
 
 // Old PRISMA schema
 
