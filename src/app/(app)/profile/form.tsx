@@ -1,36 +1,29 @@
 "use client";
 
 import parsePhoneNumberFromString, { AsYouType } from "libphonenumber-js";
-import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 import { toast } from "sonner";
 import { type z } from "zod";
 
 import { updateUserProfile } from "@/app/(app)/profile/actions";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import SubmitButton from "@/components/ui/submit-button";
 import { type userProfileSchema } from "@/server/db/schema";
-
-const SubmitButton = () => {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button type="submit" disabled={pending} className="flex gap-2">
-      {pending && <Loader2 className="h-4 w-4 animate-spin" />}
-      Update profile
-    </Button>
-  );
-};
 
 type ProfileFormProps = z.infer<typeof userProfileSchema>;
 
+const initialFormState = {
+  success: false,
+  message: "",
+};
+
 const ProfileForm = ({ user }: { user: ProfileFormProps }) => {
-  const [formState, formAction] = useFormState(updateUserProfile, {
-    success: false,
-    message: "",
-  });
+  const [formState, formAction] = useFormState(
+    updateUserProfile,
+    initialFormState,
+  );
 
   useEffect(() => {
     if (formState.success && formState.message) {
@@ -47,7 +40,7 @@ const ProfileForm = ({ user }: { user: ProfileFormProps }) => {
     "US",
   )?.formatNational();
 
-  const handleOnInput = (event: React.FormEvent<HTMLInputElement>) => {
+  const handlePhoneInput = (event: React.FormEvent<HTMLInputElement>) => {
     const asYouType = new AsYouType("US");
     const value = event.currentTarget.value;
     const formattedValue = asYouType.input(value);
@@ -86,12 +79,12 @@ const ProfileForm = ({ user }: { user: ProfileFormProps }) => {
               id="phone"
               name="phone"
               defaultValue={formattedPhone}
-              onInput={handleOnInput}
+              onInput={handlePhoneInput}
               maxLength={14}
             />
           </div>
         </div>
-        <SubmitButton />
+        <SubmitButton>Update Profile</SubmitButton>
       </div>
     </form>
   );

@@ -37,6 +37,9 @@ const AlertModal = ({
       dialog.title = "Verification Error";
       dialog.description =
         "The login link is no longer valid. It may have been used already or it may have expired.";
+    } else if (error) {
+      dialog.title = "Unable to log in";
+      dialog.description = error.toString();
     } else {
       dialog.title = "Something has gone wrong";
       dialog.description = "Unable to log in. Please try again later.";

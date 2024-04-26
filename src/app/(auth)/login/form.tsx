@@ -1,15 +1,12 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, type LucideProps } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import { z } from "zod";
+import { fromZodError } from "zod-validation-error";
 
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -17,54 +14,49 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import GoogleIcon from "@/components/ui/google-icon";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
+import SubmitButton from "@/components/ui/submit-button";
 import regen from "@/public/ReGen_Icon_Primary.png";
+import { userProfileSchema } from "@/server/db/schema";
 
-export default function LoginForm() {
-  const [isEmailLoading, setIsEmailLoading] = useState<boolean>(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
-
-  const formSchema = z.object({
-    email: z.string().email(),
-  });
-
-  type FormData = z.infer<typeof formSchema>;
-
+const LoginForm = () => {
   const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-  });
+  const handleSubmit = async (formData: FormData) => {
+    const email = formData.get("email");
+    if (email) {
+      const emailSchema = userProfileSchema.pick({
+        email: true,
+      });
+      const parse = emailSchema.safeParse({
+        email,
+      });
 
-  async function emailSubmit(data: FormData) {
-    setIsEmailLoading(true);
+      if (!parse.success) {
+        const message = fromZodError(parse.error).toString();
+        router.push(`/login?error=${message}`);
+        return false;
+      }
 
-    const loginResult = await signIn("email", {
-      email: data.email.toLowerCase(),
-      redirect: false,
-      callbackUrl: "/",
-    });
+      const loginResult = await signIn("email", {
+        email: parse.data.email.toLowerCase(),
+        redirect: false,
+        callbackUrl: "/",
+      });
 
-    if (loginResult?.error) {
-      router.push(`/login?error=${loginResult.error}`);
+      if (loginResult?.error) {
+        router.push(`/login?error=${loginResult.error}`);
+      } else {
+        router.push("/login?verify=1");
+      }
     } else {
-      router.push("/login?verify=1");
+      await signIn("google", {
+        callbackUrl: "/",
+      });
     }
-  }
-
-  async function googleSubmit() {
-    setIsGoogleLoading(true);
-
-    await signIn("google", {
-      callbackUrl: "/",
-    });
-  }
+  };
 
   return (
     <Card className="mx-auto max-w-sm">
@@ -79,37 +71,24 @@ export default function LoginForm() {
           Re:Generation Admin
         </CardTitle>
         <CardDescription className="text-center">
-          Please enter your email below to log in to your account. A log in link
+          Please enter your email below to log in to your account. A login link
           will be emailed to you.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-4">
-          <form
-            onSubmit={handleSubmit(emailSubmit)}
-            className="flex flex-col gap-4"
-          >
+          <form id="email" className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
+                name="email"
                 placeholder="name@example.com"
                 required
-                {...register("email")}
               />
-              {errors?.email && (
-                <p className="px-1 text-sm text-red-600">
-                  {errors.email.message}
-                </p>
-              )}
             </div>
-            <Button className="w-full" disabled={isEmailLoading} type="submit">
-              {isEmailLoading && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              Log in with email
-            </Button>
+            <SubmitButton action={handleSubmit}>Log in with email</SubmitButton>
           </form>
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
@@ -121,32 +100,18 @@ export default function LoginForm() {
               </span>
             </div>
           </div>
-          <div className="flex flex-col gap-2">
-            <Button
-              variant="outline"
-              className="w-full"
-              disabled={isGoogleLoading}
-              onClick={googleSubmit}
-            >
-              {isGoogleLoading && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              <GoogleIcon className="mr-2 h-4 w-4" />
-              Google
-            </Button>
-            {/* Add other providers here */}
-          </div>
+          <form id="google" className="flex flex-col gap-4">
+            <div id="google" className="flex flex-col gap-2">
+              <SubmitButton action={handleSubmit} variant="outline">
+                <GoogleIcon className="h-4 w-4" />
+                Google
+              </SubmitButton>
+            </div>
+          </form>
         </div>
       </CardContent>
     </Card>
   );
-}
+};
 
-const GoogleIcon = (props: LucideProps) => (
-  <svg viewBox="0 0 30 30" {...props}>
-    <path
-      fill="currentColor"
-      d="M 15.003906 3 C 8.3749062 3 3 8.373 3 15 C 3 21.627 8.3749062 27 15.003906 27 C 25.013906 27 27.269078 17.707 26.330078 13 L 25 13 L 22.732422 13 L 15 13 L 15 17 L 22.738281 17 C 21.848702 20.448251 18.725955 23 15 23 C 10.582 23 7 19.418 7 15 C 7 10.582 10.582 7 15 7 C 17.009 7 18.839141 7.74575 20.244141 8.96875 L 23.085938 6.1289062 C 20.951937 4.1849063 18.116906 3 15.003906 3 z"
-    ></path>
-  </svg>
-);
+export default LoginForm;
