@@ -18,6 +18,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import GoogleIcon from "@/components/ui/google-icon";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,11 +45,7 @@ const LoginForm = ({ params }: LoginFormProps) => {
   const [isEmailLoading, setIsEmailLoading] = useState<boolean>(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>({
+  const form = useForm<FormData>({
     resolver: zodResolver(emailSchema),
   });
 
@@ -92,35 +96,36 @@ const LoginForm = ({ params }: LoginFormProps) => {
               </AlertDescription>
             </Alert>
           )}
-          <form
-            id="email"
-            className="flex flex-col gap-4"
-            onSubmit={handleSubmit(handleEmailSubmit)}
-          >
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="name@example.com"
-                required
-                {...register("email")}
+          <Form {...form}>
+            <form
+              className="flex flex-col gap-4"
+              onSubmit={form.handleSubmit(handleEmailSubmit)}
+            >
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="example@email.com" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {errors?.email && (
-                <Alert variant={"destructive"}>
-                  <ExclamationTriangleIcon className="h-4 w-4" />
-                  <AlertTitle>Error</AlertTitle>
-                  <AlertDescription>{errors.email.message}</AlertDescription>
-                </Alert>
-              )}
-            </div>
-            <Button className="w-full" disabled={isEmailLoading} type="submit">
-              {isEmailLoading && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              Log in with email
-            </Button>
-          </form>
+              <Button
+                className="w-full"
+                disabled={isEmailLoading}
+                type="submit"
+              >
+                {isEmailLoading && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Log in with email
+              </Button>
+            </form>
+          </Form>
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
@@ -144,7 +149,6 @@ const LoginForm = ({ params }: LoginFormProps) => {
               <GoogleIcon className="mr-2 h-4 w-4" />
               Google
             </Button>
-            {/* Add other providers here */}
           </div>
         </div>
       </CardContent>
