@@ -4,8 +4,8 @@ import { CircleUser, LogIn, LogOut, Settings, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { type z } from "zod";
 
-import ModeToggle from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,13 +15,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { userSchema } from "@/server/db/schema";
 
 const signedIn = true;
 
-type UserMenuProps = {
-  image?: string | null;
-  name?: string | null;
-};
+const userMenuSchema = userSchema.pick({
+  name: true,
+  image: true,
+});
+
+type UserMenuProps = z.infer<typeof userMenuSchema>;
 
 const UserMenu = ({ user }: { user: UserMenuProps }) => {
   return (
@@ -43,7 +46,11 @@ const UserMenu = ({ user }: { user: UserMenuProps }) => {
       <DropdownMenuContent align="end">
         {signedIn ? (
           <>
-            <DropdownMenuLabel>{`${user.name}`}</DropdownMenuLabel>
+            {user.name ? (
+              <DropdownMenuLabel>{`${user.name}`}</DropdownMenuLabel>
+            ) : (
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link href="/profile" className="flex cursor-pointer gap-4">
