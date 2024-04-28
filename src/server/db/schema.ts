@@ -108,6 +108,11 @@ export const userSchema = createSelectSchema(users).extend({
   email: z.string().email(),
   phone: zPhone,
 });
+export const userProfileSchema = userSchema.pick({
+  name: true,
+  email: true,
+  phone: true,
+});
 
 // Old PRISMA schema
 
