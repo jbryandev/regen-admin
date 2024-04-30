@@ -3,11 +3,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import parsePhoneNumberFromString, { AsYouType } from "libphonenumber-js";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { type z } from "zod";
 
+import { updateUserProfile } from "@/app/(app)/profile/actions";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -18,17 +20,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import SubmitButton from "@/components/ui/submit-button";
 import { userProfileSchema } from "@/server/db/schema";
 
 type FormData = z.infer<typeof userProfileSchema>;
 
-const ProfileForm = ({ user }: { user: FormData }) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+const initialFormState = {
+  success: false,
+  message: "",
+};
 
-  if (user.name === null) {
-    // Controlled form requires non-null values
-    user.name = "";
-  }
+const ProfileForm = ({ user }: { user: FormData }) => {
+  const [state, submitAction] = useFormState(
+    updateUserProfile,
+    initialFormState,
+  );
 
   const formattedPhone = String(
     parsePhoneNumberFromString(user.phone, "US")?.formatNational(),
@@ -47,16 +53,20 @@ const ProfileForm = ({ user }: { user: FormData }) => {
     event.currentTarget.value = formattedValue;
   };
 
-  const onSubmit = async () => {
-    setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsLoading(false);
-    return true;
-  };
+  useEffect(() => {
+    const { success, message } = state;
+    if (!success) {
+      toast.error("Unable to update profile", {
+        description: message,
+      });
+    } else {
+      toast.success(message);
+    }
+  }, [state]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form action={submitAction} className="space-y-8">
         <div className="flex max-w-md flex-col gap-4">
           <FormField
             control={form.control}
@@ -107,10 +117,7 @@ const ProfileForm = ({ user }: { user: FormData }) => {
           >
             Reset
           </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Update profile
-          </Button>
+          <SubmitButton>Update profile</SubmitButton>
         </div>
       </form>
     </Form>
