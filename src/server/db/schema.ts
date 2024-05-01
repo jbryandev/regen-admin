@@ -105,6 +105,7 @@ export const verificationTokens = createTable(
 
 // Schemas
 export const userSchema = createSelectSchema(users).extend({
+  name: z.optional(z.string()),
   email: z.string().email(),
   phone: zPhone,
 });

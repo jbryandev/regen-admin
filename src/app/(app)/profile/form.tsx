@@ -2,8 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import parsePhoneNumberFromString, { AsYouType } from "libphonenumber-js";
-import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -23,14 +22,14 @@ import { Input } from "@/components/ui/input";
 import SubmitButton from "@/components/ui/submit-button";
 import { userProfileSchema } from "@/server/db/schema";
 
-type FormData = z.infer<typeof userProfileSchema>;
+type UserProfile = z.infer<typeof userProfileSchema>;
 
 const initialFormState = {
   success: false,
   message: "",
 };
 
-const ProfileForm = ({ user }: { user: FormData }) => {
+const ProfileForm = ({ user }: { user: UserProfile }) => {
   const [state, submitAction] = useFormState(
     updateUserProfile,
     initialFormState,
@@ -40,7 +39,7 @@ const ProfileForm = ({ user }: { user: FormData }) => {
     parsePhoneNumberFromString(user.phone, "US")?.formatNational(),
   );
 
-  const form = useForm<FormData>({
+  const form = useForm<UserProfile>({
     resolver: zodResolver(userProfileSchema),
     values: { ...user, phone: formattedPhone },
     mode: "onChange",
