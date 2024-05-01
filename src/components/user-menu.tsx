@@ -15,14 +15,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { userSchema } from "@/server/db/schema";
+import { type userMenuSchema } from "@/server/db/schema";
 
 const signedIn = true;
-
-const userMenuSchema = userSchema.pick({
-  name: true,
-  image: true,
-});
 
 type UserMenuProps = z.infer<typeof userMenuSchema>;
 
@@ -36,7 +31,12 @@ const UserMenu = ({ user }: { user: UserMenuProps }) => {
           className="relative rounded-full"
         >
           {user.image ? (
-            <Image src={user.image} alt="Profile image" fill />
+            <Image
+              src={user.image}
+              alt="Profile image"
+              width={36}
+              height={36}
+            />
           ) : (
             <CircleUser className="h-5 w-5" />
           )}

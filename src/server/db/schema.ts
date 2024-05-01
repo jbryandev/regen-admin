@@ -114,6 +114,10 @@ export const userProfileSchema = userSchema.pick({
   email: true,
   phone: true,
 });
+export const userMenuSchema = userSchema.pick({
+  name: true,
+  image: true,
+});
 
 // Old PRISMA schema
 
