@@ -4,7 +4,6 @@
 import { relations, sql } from "drizzle-orm";
 import {
   boolean,
-  date,
   index,
   integer,
   pgEnum,
@@ -37,7 +36,6 @@ export const users = createTable("user", {
   }).default(sql`CURRENT_TIMESTAMP`),
   image: varchar("image", { length: 255 }),
   phone: varchar("phone", { length: 15 }),
-  dob: date("dob", { mode: "date" }),
   gender: genderEnum("gender"),
 });
 
