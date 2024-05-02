@@ -48,9 +48,13 @@ export const authOptions: NextAuthOptions = {
       },
     }),
     signIn: async ({ user }) => {
+      if (!user.email) {
+        throw new Error("Email must be provided.");
+      }
+      const email = user.email ?? "";
       // Only existing users can sign in
       const existingAccount = await db.query.users.findFirst({
-        where: (model, { eq }) => eq(model.email, user.email!),
+        where: (model, { eq }) => eq(model.email, email),
       });
       if (existingAccount) {
         return true;
