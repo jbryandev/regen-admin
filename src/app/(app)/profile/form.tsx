@@ -35,9 +35,10 @@ const ProfileForm = ({ user }: { user: UserProfile }) => {
     initialFormState,
   );
 
-  const formattedPhone = String(
-    parsePhoneNumberFromString(user.phone, "US")?.formatNational(),
-  );
+  const formattedPhone = parsePhoneNumberFromString(
+    user.phone ?? "",
+    "US",
+  )?.formatNational();
 
   const form = useForm<UserProfile>({
     resolver: zodResolver(userProfileSchema),

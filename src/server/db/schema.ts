@@ -122,7 +122,7 @@ export const roles = createTable("role", {
 export const userSchema = createSelectSchema(users).extend({
   name: z.optional(z.string()),
   email: z.string().email(),
-  phone: zPhone,
+  phone: z.optional(zPhone),
 });
 export const userProfileSchema = userSchema.pick({
   name: true,
