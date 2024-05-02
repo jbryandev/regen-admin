@@ -1,5 +1,4 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { eq } from "drizzle-orm";
 import {
   getServerSession,
   type DefaultSession,
@@ -50,10 +49,10 @@ export const authOptions: NextAuthOptions = {
     }),
     signIn: async ({ user }) => {
       // Only existing users can sign in
-      const account = await db.query.users.findFirst({
+      const existingAccount = await db.query.users.findFirst({
         where: (model, { eq }) => eq(model.email, user.email!),
       });
-      if (account) {
+      if (existingAccount) {
         return true;
       } else {
         return false;
