@@ -3,12 +3,16 @@
 
 import { relations, sql } from "drizzle-orm";
 import {
+  boolean,
+  date,
   index,
   integer,
+  pgEnum,
   pgTableCreator,
   primaryKey,
   text,
   timestamp,
+  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -17,16 +21,15 @@ import { z } from "zod";
 
 import { zPhone } from "@/lib/utils";
 
-/**
- * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
- * database instance for multiple projects.
- *
- * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
- */
+// Multiproject schema definition
 export const createTable = pgTableCreator((name) => `regen_${name}`);
 
+// Enums
+export const genderEnum = pgEnum("gender", ["male", "female"]);
+
+// Authentication tables
 export const users = createTable("user", {
-  id: varchar("id", { length: 255 }).notNull().primaryKey(),
+  id: uuid("id").defaultRandom().notNull().primaryKey(),
   name: varchar("name", { length: 255 }),
   email: varchar("email", { length: 255 }).notNull(),
   emailVerified: timestamp("emailVerified", {
@@ -34,6 +37,8 @@ export const users = createTable("user", {
   }).default(sql`CURRENT_TIMESTAMP`),
   image: varchar("image", { length: 255 }),
   phone: varchar("phone", { length: 15 }),
+  dob: date("dob", { mode: "date" }),
+  gender: genderEnum("gender"),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -43,7 +48,8 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const accounts = createTable(
   "account",
   {
-    userId: varchar("userId", { length: 255 })
+    userId: uuid("userId")
+      .defaultRandom()
       .notNull()
       .references(() => users.id),
     type: varchar("type", { length: 255 })
@@ -77,7 +83,8 @@ export const sessions = createTable(
     sessionToken: varchar("sessionToken", { length: 255 })
       .notNull()
       .primaryKey(),
-    userId: varchar("userId", { length: 255 })
+    userId: uuid("userId")
+      .defaultRandom()
       .notNull()
       .references(() => users.id),
     expires: timestamp("expires", { mode: "date" }).notNull(),
@@ -103,7 +110,15 @@ export const verificationTokens = createTable(
   }),
 );
 
-// Schemas
+// App-specific tables
+export const roles = createTable("role", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  isAdmin: boolean("isAdmin").default(false),
+});
+
+// Validation schemas
 export const userSchema = createSelectSchema(users).extend({
   name: z.optional(z.string()),
   email: z.string().email(),

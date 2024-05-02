@@ -1,4 +1,5 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { eq } from "drizzle-orm";
 import {
   getServerSession,
   type DefaultSession,
@@ -10,7 +11,7 @@ import GoogleProvider from "next-auth/providers/google";
 
 import { env } from "@/env";
 import { db } from "@/server/db";
-import { createTable } from "@/server/db/schema";
+import { createTable, users } from "@/server/db/schema";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -47,22 +48,12 @@ export const authOptions: NextAuthOptions = {
         id: user.id,
       },
     }),
-    signIn: async ({ user, account, profile }) => {
-      let email = "";
-
-      if (account?.provider === "google") {
-        email = profile?.email ?? "";
-      } else if (account?.provider === "email") {
-        email = user?.email ?? "";
-      } else {
-        return false;
-      }
-
+    signIn: async ({ user }) => {
       // Only existing users can sign in
-      const existingAccount = await db.query.users.findFirst({
-        where: (model, { eq }) => eq(model.email, email),
+      const account = await db.query.users.findFirst({
+        where: (model, { eq }) => eq(model.email, user.email!),
       });
-      if (existingAccount) {
+      if (account) {
         return true;
       } else {
         return false;
@@ -74,6 +65,7 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
     }),
     EmailProvider({
       server: {
