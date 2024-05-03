@@ -29,10 +29,6 @@ export const users = createTable("user", {
   gender: genderEnum("gender"),
 });
 
-export const usersRelations = relations(users, ({ many }) => ({
-  accounts: many(accounts),
-}));
-
 export const accounts = createTable(
   "account",
   {
@@ -61,10 +57,6 @@ export const accounts = createTable(
   }),
 );
 
-export const accountsRelations = relations(accounts, ({ one }) => ({
-  user: one(users, { fields: [accounts.userId], references: [users.id] }),
-}));
-
 export const sessions = createTable(
   "session",
   {
@@ -81,10 +73,6 @@ export const sessions = createTable(
     userIdIdx: index("session_userId_idx").on(session.userId),
   }),
 );
-
-export const sessionsRelations = relations(sessions, ({ one }) => ({
-  user: one(users, { fields: [sessions.userId], references: [users.id] }),
-}));
 
 export const verificationTokens = createTable(
   "verificationToken",
@@ -104,6 +92,19 @@ export const roles = createTable("role", {
   description: text("description"),
   isAdmin: boolean("isAdmin").default(false).notNull(),
 });
+
+// Relations
+export const usersRelations = relations(users, ({ many }) => ({
+  accounts: many(accounts),
+}));
+
+export const accountsRelations = relations(accounts, ({ one }) => ({
+  user: one(users, { fields: [accounts.userId], references: [users.id] }),
+}));
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}));
 
 // Schemas
 export const userSchema = createSelectSchema(users).extend({
