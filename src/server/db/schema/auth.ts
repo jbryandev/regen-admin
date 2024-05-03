@@ -1,5 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import {
+  boolean,
   index,
   integer,
   primaryKey,
@@ -97,18 +98,29 @@ export const verificationTokens = createTable(
   }),
 );
 
+export const roles = createTable("role", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  isAdmin: boolean("isAdmin").default(false).notNull(),
+});
+
 // Schemas
 export const userSchema = createSelectSchema(users).extend({
   name: z.optional(z.string()),
   email: z.string().email(),
   phone: z.optional(zPhone),
 });
+
 export const userProfileSchema = userSchema.pick({
   name: true,
   email: true,
   phone: true,
 });
+
 export const userMenuSchema = userSchema.pick({
   name: true,
   image: true,
 });
+
+export const roleSchema = createSelectSchema(roles);

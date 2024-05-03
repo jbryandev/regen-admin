@@ -29,7 +29,7 @@ import {
 import GoogleIcon from "@/components/ui/google-icon";
 import { Input } from "@/components/ui/input";
 import regen from "@/public/ReGen_Icon_Primary.png";
-import { userSchema } from "@/server/db/schema/user";
+import { userSchema } from "@/server/db/schema/auth";
 
 const emailSchema = userSchema.pick({
   email: true,

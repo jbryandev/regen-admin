@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { fromZodError } from "zod-validation-error";
 
-import { userProfileSchema } from "@/server/db/schema/user";
+import { userProfileSchema } from "@/server/db/schema/auth";
 import { updateUserProfile as updateProfile } from "@/server/queries";
 
 const updateUserProfile = async (

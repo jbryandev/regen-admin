@@ -3,7 +3,7 @@ import { type z } from "zod";
 
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
-import { type userProfileSchema, users } from "@/server/db/schema/user";
+import { type userProfileSchema, users } from "@/server/db/schema/auth";
 
 import "server-only";
 
