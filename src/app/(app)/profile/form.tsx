@@ -55,11 +55,11 @@ const ProfileForm = ({ user }: { user: UserProfile }) => {
 
   useEffect(() => {
     const { success, message } = state;
-    if (!success) {
+    if (!success && message) {
       toast.error("Unable to update profile", {
         description: message,
       });
-    } else {
+    } else if (success && message) {
       toast.success(message);
     }
   }, [state]);
