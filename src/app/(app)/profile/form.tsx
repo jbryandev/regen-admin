@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import SubmitButton from "@/components/ui/submit-button";
-import { userProfileSchema } from "@/server/db/schema";
+import { userProfileSchema } from "@/server/db/schema/user";
 
 type UserProfile = z.infer<typeof userProfileSchema>;
 

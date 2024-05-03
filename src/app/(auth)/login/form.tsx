@@ -28,9 +28,8 @@ import {
 } from "@/components/ui/form";
 import GoogleIcon from "@/components/ui/google-icon";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import regen from "@/public/ReGen_Icon_Primary.png";
-import { userSchema } from "@/server/db/schema";
+import { userSchema } from "@/server/db/schema/user";
 
 const emailSchema = userSchema.pick({
   email: true,

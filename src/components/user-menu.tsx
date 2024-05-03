@@ -15,7 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { type userMenuSchema } from "@/server/db/schema";
+import { type userMenuSchema } from "@/server/db/schema/user";
 
 const signedIn = true;
 
