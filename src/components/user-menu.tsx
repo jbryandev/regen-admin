@@ -36,6 +36,7 @@ const UserMenu = ({ user }: { user: UserMenuProps }) => {
               alt="Profile image"
               width={36}
               height={36}
+              className="rounded-full"
             />
           ) : (
             <CircleUser className="h-5 w-5" />
