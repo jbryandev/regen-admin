@@ -1,10 +1,9 @@
 import { Inter } from "next/font/google";
 
-import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-
 import "@/styles/globals.css";
+import UserSwitcher from "@/components/user-switcher";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,7 +25,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
-          <TailwindIndicator />
+          <UserSwitcher />
           <Toaster visibleToasts={3} />
         </ThemeProvider>
       </body>
