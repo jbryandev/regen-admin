@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "next build",
-    "db:seed": "tsx src/server/db/seed.ts",
+    "db:seed": "tsx src/server/db/seed",
     "db:push": "drizzle-kit push:pg",
     "db:studio": "drizzle-kit studio",
     "dev": "next dev --turbo",

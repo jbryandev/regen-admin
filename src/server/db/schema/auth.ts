@@ -15,6 +15,7 @@ import { z } from "zod";
 
 import { zPhone } from "@/lib/utils";
 import { createTable, genderEnum } from "@/server/db/schema";
+import { groups } from "@/server/db/schema/app";
 
 // Table definitions
 export const users = createTable("user", {
@@ -26,7 +27,11 @@ export const users = createTable("user", {
   }).default(sql`CURRENT_TIMESTAMP`),
   image: varchar("image", { length: 255 }),
   phone: varchar("phone", { length: 15 }),
-  gender: genderEnum("gender"),
+  gender: genderEnum("gender").notNull(),
+  roleId: uuid("role_id")
+    .notNull()
+    .references(() => roles.id),
+  groupId: uuid("group_id").references(() => groups.id),
 });
 
 export const accounts = createTable(
@@ -90,11 +95,12 @@ export const roles = createTable("role", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
-  isAdmin: boolean("isAdmin").default(false).notNull(),
+  isAdmin: boolean("is_admin").default(false).notNull(),
 });
 
 // Relations
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
+  role: one(roles, { fields: [users.roleId], references: [roles.id] }),
   accounts: many(accounts),
 }));
 
@@ -106,7 +112,7 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
 }));
 
-// Schemas
+// Schema
 export const userSchema = createSelectSchema(users).extend({
   name: z.optional(z.string()),
   email: z.string().email(),
