@@ -12,6 +12,7 @@ import {
   Mail,
   Send,
   Speech,
+  Star,
   UserCheck,
   Users,
   Video,
@@ -52,9 +53,10 @@ const DashboardPage = () => {
         <div
           className={cn(
             buttonVariants({ variant: "secondary" }),
-            "cursor-default select-none",
+            "flex cursor-default select-none gap-2",
           )}
         >
+          <Star className="h-4 w-4" />
           Regen Leader
         </div>
       </div>
@@ -128,7 +130,7 @@ const DashboardPage = () => {
         <Card className="order-3 col-span-2 flex flex-col justify-between xl:order-2">
           <CardHeader className="flex-none">
             <CardDescription className="flex flex-row items-center justify-between space-y-0">
-              Tasks for the week
+              Checklist
               <ListChecks className="h-4 w-4 text-muted-foreground" />
             </CardDescription>
           </CardHeader>
