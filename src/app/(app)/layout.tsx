@@ -8,6 +8,7 @@ import { MobileNav, SidebarNav } from "@/components/navigation";
 // import NotificationsMenu from "@/components/notifications-menu";
 import { Input } from "@/components/ui/input";
 import UserMenu from "@/components/user-menu";
+import UserSwitcher from "@/components/user-switcher";
 import regen from "@/public/ReGen_Icon_Primary.png";
 import { getServerAuthSession } from "@/server/auth";
 
@@ -29,8 +30,8 @@ export default async function AppLayout({
   }
 
   const user = {
-    name: session.user.name,
-    image: session.user.image,
+    name: session.user.name ?? undefined,
+    image: session.user.image ?? null,
   };
 
   return (
@@ -69,6 +70,7 @@ export default async function AppLayout({
         </header>
         {children}
       </div>
+      <UserSwitcher />
     </div>
   );
 }

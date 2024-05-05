@@ -22,9 +22,7 @@ import { db } from "@/server/db";
 import { roles, users } from "@/server/db/schema/auth";
 
 const UserSwitcher = async () => {
-  const session = await getServerAuthSession();
-
-  if (process.env.NODE_ENV === "production" || !session) return null;
+  if (process.env.NODE_ENV === "production") return null;
 
   return (
     <div className="fixed bottom-0 z-50 flex w-full justify-center">
@@ -46,7 +44,9 @@ const UserSwitcher = async () => {
                 Sign in as different users and roles
               </DrawerDescription>
             </DrawerHeader>
-            <UserPanel />
+            <ScrollArea className="h-96">
+              <UserPanel />
+            </ScrollArea>
             <DrawerFooter>
               <DrawerClose asChild>
                 <Button variant={"outline"}>Cancel</Button>
@@ -60,6 +60,11 @@ const UserSwitcher = async () => {
 };
 
 const UserPanel = async () => {
+  const session = await getServerAuthSession();
+  if (!session?.user) {
+    redirect("/login");
+  }
+
   const logins = await db
     .select({
       id: users.id,
@@ -71,15 +76,19 @@ const UserPanel = async () => {
     .from(users)
     .leftJoin(roles, eq(users.roleId, roles.id));
 
-  const session = await getServerAuthSession();
-  if (!session?.user) {
-    redirect("/login");
-  }
-  console.log("session:", session);
-
   if (!logins || !session) {
     return null;
   }
+
+  // Map to sort logins by role
+  const loginSortMap = {
+    Administrator: 1,
+    Director: 2,
+    Coach: 3,
+    Leader: 4,
+    Tech: 5,
+  };
+  logins.sort((x, y) => loginSortMap[x.role!] - loginSortMap[y.role!]);
 
   return (
     <div className="flex flex-col space-y-4 p-4">

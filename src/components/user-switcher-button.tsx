@@ -1,23 +1,21 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-
 import { Button } from "@/components/ui/button";
 
 type Props = {
   user: {
     id: string;
-    name: string;
+    name: string | null;
     email: string;
-    image: string;
-    role: string;
+    image: string | null;
+    role: string | null;
   };
   disabled: boolean;
 };
 
 const UserSwitcherButton = ({ user, disabled }: Props) => {
-  const handleClick = async () => {
-    // await signIn();
+  const handleClick = () => {
+    return user;
   };
 
   return (
