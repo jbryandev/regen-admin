@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { switchUser } from "@/components/user-switcher-actions";
 
 type Props = {
   user: {
@@ -14,8 +15,8 @@ type Props = {
 };
 
 const UserSwitcherButton = ({ user, disabled }: Props) => {
-  const handleClick = () => {
-    return user;
+  const handleClick = async () => {
+    return await switchUser(user.id);
   };
 
   return (
