@@ -28,10 +28,7 @@ const UserSwitcher = async () => {
     <div className="fixed bottom-0 z-50 flex w-full justify-center">
       <Drawer>
         <DrawerTrigger asChild>
-          <Button
-            variant={"outline"}
-            className="mb-2 ml-2 flex h-11 gap-2 pl-2 pr-3"
-          >
+          <Button variant={"outline"} className="mb-2 flex h-11 w-40 gap-3">
             <TailwindIndicator />
             Switch User
           </Button>
