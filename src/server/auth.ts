@@ -22,15 +22,12 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      // ...other properties
-      // role: Role;
+      role: {
+        name: string;
+        isAdmin: boolean;
+      };
     } & DefaultSession["user"];
   }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
 }
 
 /**
@@ -40,13 +37,20 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    session: async ({ session, user }) => {
+      const userInfo = await db.query.users.findFirst({
+        where: (model, { eq }) => eq(model.id, user.id),
+        with: { role: true },
+      });
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: user.id,
+          role: { name: userInfo?.role.name, isAdmin: userInfo?.role.isAdmin },
+        },
+      };
+    },
     signIn: async ({ user }) => {
       if (!user.email) {
         throw new Error("Email must be provided.");
