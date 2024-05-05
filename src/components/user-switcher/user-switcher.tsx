@@ -16,7 +16,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import UserSwitcherButton from "@/components/user-switcher-button";
+import UserSwitcherButton from "@/components/user-switcher/button";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
 import { roles, users } from "@/server/db/schema/auth";

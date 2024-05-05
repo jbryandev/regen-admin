@@ -8,7 +8,7 @@ import { MobileNav, SidebarNav } from "@/components/navigation";
 // import NotificationsMenu from "@/components/notifications-menu";
 import { Input } from "@/components/ui/input";
 import UserMenu from "@/components/user-menu";
-import UserSwitcher from "@/components/user-switcher";
+import UserSwitcher from "@/components/user-switcher/user-switcher";
 import regen from "@/public/ReGen_Icon_Primary.png";
 import { getServerAuthSession } from "@/server/auth";
 
@@ -25,6 +25,7 @@ export default async function AppLayout({
 }) {
   // Require users to be logged in to access all parts of application
   const session = await getServerAuthSession();
+  console.log("session:", session);
   if (!session?.user) {
     redirect("/login");
   }
