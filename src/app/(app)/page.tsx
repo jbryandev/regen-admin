@@ -58,7 +58,7 @@ const DashboardPage = () => {
           Regen Leader
         </div>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 md:gap-8 xl:grid-cols-4">
+      <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 md:gap-8 xl:grid-cols-4">
         <Card className="order-1 flex flex-col justify-between">
           <CardHeader className="flex-none">
             <CardDescription className="flex flex-row items-center justify-between space-y-0">
