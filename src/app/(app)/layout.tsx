@@ -25,7 +25,6 @@ export default async function AppLayout({
 }) {
   // Require users to be logged in to access all parts of application
   const session = await getServerAuthSession();
-  console.log("session:", session);
   if (!session?.user) {
     redirect("/login");
   }
