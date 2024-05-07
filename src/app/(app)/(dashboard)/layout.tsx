@@ -1,5 +1,3 @@
-import { Star } from "lucide-react";
-
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getServerAuthSession } from "@/server/auth";
@@ -24,7 +22,6 @@ const DashboardLayout = async ({ children, leader, admin }: DashboardProps) => {
             "flex cursor-default select-none gap-2",
           )}
         >
-          <Star className="h-4 w-4" />
           {role}
         </div>
       </div>

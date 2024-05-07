@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { HeartHandshake, Star, User, Users } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -9,17 +10,22 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { db } from "@/server/db";
+import { roles, users } from "@/server/db/schema/auth";
 
 const AdminDashboard = async () => {
   const groups = await db.query.groups.findMany();
   const participants = await db.query.participants.findMany();
-  const leaders = await db.query.users.findMany({
-    with: {
-      role: {
-        where: (role, { eq }) => eq(role.name, "Leader"),
-      },
-    },
-  });
+  const leaders = await db
+    .select()
+    .from(users)
+    .innerJoin(roles, eq(users.roleId, roles.id))
+    .where(eq(roles.name, "Leader"));
+
+  const coaches = await db
+    .select()
+    .from(users)
+    .innerJoin(roles, eq(users.roleId, roles.id))
+    .where(eq(roles.name, "Coach"));
 
   return (
     <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 md:gap-8 xl:grid-cols-4">
@@ -33,7 +39,7 @@ const AdminDashboard = async () => {
         </CardHeader>
         <CardFooter className="flex-none gap-2">
           <Button variant={"secondary"} className="w-full">
-            All groups
+            View all groups
           </Button>
         </CardFooter>
       </Card>
@@ -47,7 +53,7 @@ const AdminDashboard = async () => {
         </CardHeader>
         <CardFooter className="flex-none gap-2">
           <Button variant={"secondary"} className="w-full">
-            All participants
+            View all participants
           </Button>
         </CardFooter>
       </Card>
@@ -61,7 +67,7 @@ const AdminDashboard = async () => {
         </CardHeader>
         <CardFooter className="flex-none gap-2">
           <Button variant={"secondary"} className="w-full">
-            All leaders
+            View all leaders
           </Button>
         </CardFooter>
       </Card>
@@ -71,11 +77,11 @@ const AdminDashboard = async () => {
             Coaches
             <HeartHandshake className="h-4 w-4 text-muted-foreground" />
           </CardDescription>
-          <CardTitle className="text-3xl">2</CardTitle>
+          <CardTitle className="text-3xl">{coaches.length}</CardTitle>
         </CardHeader>
         <CardFooter className="flex-none gap-2">
           <Button variant={"secondary"} className="w-full">
-            All coaches
+            View all coaches
           </Button>
         </CardFooter>
       </Card>
