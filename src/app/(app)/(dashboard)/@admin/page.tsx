@@ -19,7 +19,7 @@ const AdminDashboard = async () => {
     .select()
     .from(users)
     .innerJoin(roles, eq(users.roleId, roles.id))
-    .where(eq(roles.name, "Leader"));
+    .where(eq(roles.name, "Group Leader"));
 
   const coaches = await db
     .select()
@@ -39,7 +39,7 @@ const AdminDashboard = async () => {
         </CardHeader>
         <CardFooter className="flex-none gap-2">
           <Button variant={"secondary"} className="w-full">
-            View all groups
+            View groups
           </Button>
         </CardFooter>
       </Card>
@@ -53,7 +53,7 @@ const AdminDashboard = async () => {
         </CardHeader>
         <CardFooter className="flex-none gap-2">
           <Button variant={"secondary"} className="w-full">
-            View all participants
+            View participants
           </Button>
         </CardFooter>
       </Card>
@@ -67,7 +67,7 @@ const AdminDashboard = async () => {
         </CardHeader>
         <CardFooter className="flex-none gap-2">
           <Button variant={"secondary"} className="w-full">
-            View all leaders
+            View leaders
           </Button>
         </CardFooter>
       </Card>
@@ -81,7 +81,7 @@ const AdminDashboard = async () => {
         </CardHeader>
         <CardFooter className="flex-none gap-2">
           <Button variant={"secondary"} className="w-full">
-            View all coaches
+            View coaches
           </Button>
         </CardFooter>
       </Card>

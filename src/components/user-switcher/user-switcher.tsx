@@ -82,7 +82,7 @@ const UserPanel = async () => {
     Administrator: 1,
     Director: 2,
     Coach: 3,
-    Leader: 4,
+    "Group Leader": 4,
     Tech: 5,
   };
   logins.sort((x, y) => loginSortMap[x.role!] - loginSortMap[y.role!]);

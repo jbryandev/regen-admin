@@ -26,7 +26,7 @@ const DashboardLayout = async ({ children, leader, admin }: DashboardProps) => {
         </div>
       </div>
       {children}
-      {role === "Leader" && leader}
+      {role === "Group Leader" && leader}
       {role === "Administrator" && admin}
     </main>
   );

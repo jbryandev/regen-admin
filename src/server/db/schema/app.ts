@@ -1,5 +1,12 @@
 import { relations } from "drizzle-orm";
-import { boolean, date, text, uuid, varchar } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  date,
+  integer,
+  text,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-zod";
 
 import { createTable, genderEnum } from "@/server/db/schema";
@@ -30,33 +37,52 @@ export const mentors = createTable("mentor", {
 
 export const groups = createTable("group", {
   id: uuid("id").defaultRandom().primaryKey(),
+  name: varchar("name", { length: 255 }),
 });
 
 export const meetings = createTable("meeting", {
   id: uuid("id").defaultRandom().primaryKey(),
-  groupId: uuid("group_id").references(() => groups.id, {
-    onDelete: "cascade",
-  }),
+  groupId: uuid("group_id")
+    .references(() => groups.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  scheduleItemId: uuid("schedule_item_id")
+    .references(() => scheduleItems.id)
+    .notNull(),
+  date: date("date", { mode: "date" }).notNull(),
+  description: text("description"),
 });
 
 export const attendance = createTable("attendance", {
   id: uuid("id").defaultRandom().primaryKey(),
-  meetingId: uuid("meeting_id").references(() => meetings.id, {
-    onDelete: "cascade",
-  }),
-  participantId: uuid("participant_id").references(() => participants.id),
+  meetingId: uuid("meeting_id")
+    .references(() => meetings.id, {
+      onDelete: "cascade",
+    })
+    .notNull(),
+  participantId: uuid("participant_id")
+    .references(() => participants.id)
+    .notNull(),
 });
 
 export const scheduleTemplates = createTable("schedule_template", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
-  scheduleItemId: uuid("schedule_item_id").references(() => scheduleItems.id),
+  duration: integer("duration"),
 });
 
 export const scheduleItems = createTable("schedule_item", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+});
+
+export const templatesToItems = createTable("templates_to_items", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  templateId: uuid("template_id").references(() => scheduleTemplates.id),
+  weekNumber: integer("week_number").notNull(),
   description: text("description"),
 });
 
