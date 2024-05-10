@@ -15,7 +15,7 @@ import { z } from "zod";
 
 import { zPhone } from "@/lib/utils";
 import { createTable, genderEnum } from "@/server/db/schema";
-import { groups } from "@/server/db/schema/app";
+import { groups, usersToGroups } from "@/server/db/schema/app";
 
 // Table definitions
 export const users = createTable("user", {
@@ -31,7 +31,6 @@ export const users = createTable("user", {
   roleId: uuid("role_id")
     .notNull()
     .references(() => roles.id),
-  groupId: uuid("group_id").references(() => groups.id),
 });
 
 export const accounts = createTable(
@@ -102,6 +101,7 @@ export const roles = createTable("role", {
 export const usersRelations = relations(users, ({ one, many }) => ({
   role: one(roles, { fields: [users.roleId], references: [roles.id] }),
   accounts: many(accounts),
+  groups: many(usersToGroups),
 }));
 
 export const accountsRelations = relations(accounts, ({ one }) => ({

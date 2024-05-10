@@ -40,6 +40,14 @@ export const groups = createTable("group", {
   name: varchar("name", { length: 255 }),
 });
 
+export const usersToGroups = createTable("users_to_groups", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
+  groupId: uuid("group_id").references(() => groups.id, {
+    onDelete: "cascade",
+  }),
+});
+
 export const meetings = createTable("meeting", {
   id: uuid("id").defaultRandom().primaryKey(),
   groupId: uuid("group_id")
@@ -116,6 +124,7 @@ export const participantRelations = relations(
       references: [groups.id],
     }),
     participantsToStruggles: many(participantsToStruggles),
+    attendance: many(attendance),
   }),
 );
 
@@ -124,9 +133,20 @@ export const mentorsRelations = relations(mentors, ({ many }) => ({
 }));
 
 export const groupRelations = relations(groups, ({ many }) => ({
-  users: many(users),
+  users: many(usersToGroups),
   meetings: many(meetings),
   participants: many(participants),
+}));
+
+export const userToGroupRelations = relations(usersToGroups, ({ one }) => ({
+  user: one(users, {
+    fields: [usersToGroups.userId],
+    references: [users.id],
+  }),
+  group: one(groups, {
+    fields: [usersToGroups.groupId],
+    references: [groups.id],
+  }),
 }));
 
 export const meetingRelations = relations(meetings, ({ one }) => ({
@@ -136,12 +156,15 @@ export const meetingRelations = relations(meetings, ({ one }) => ({
   }),
 }));
 
-export const attendanceRelations = relations(attendance, ({ one, many }) => ({
+export const attendanceRelations = relations(attendance, ({ one }) => ({
   meeting: one(meetings, {
     fields: [attendance.meetingId],
     references: [meetings.id],
   }),
-  participants: many(participants),
+  participant: one(participants, {
+    fields: [attendance.participantId],
+    references: [participants.id],
+  }),
 }));
 
 export const scheduleTemplateRelations = relations(
@@ -167,3 +190,4 @@ export const struggleSchema = createSelectSchema(struggles);
 export const participantToStruggleSchema = createSelectSchema(
   participantsToStruggles,
 );
+export const userToGroupSchema = createSelectSchema(usersToGroups);

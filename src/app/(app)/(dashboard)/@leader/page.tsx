@@ -1,4 +1,9 @@
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import weekday from "dayjs/plugin/weekday";
+import parsePhoneNumberFromString from "libphonenumber-js";
 import { BookOpen, CalendarDays, Circle, ListChecks } from "lucide-react";
+import { type z } from "zod";
 
 import { ColoredDot } from "@/components/colored-dot";
 import { Button } from "@/components/ui/button";
@@ -18,8 +23,69 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getServerAuthSession } from "@/server/auth";
+import { db } from "@/server/db";
+import {
+  type meetingSchema,
+  type attendanceSchema,
+} from "@/server/db/schema/app";
 
-const LeaderDashboard = () => {
+type Attendance = Pick<z.infer<typeof attendanceSchema>, "id">;
+type Meeting = Pick<
+  z.infer<typeof meetingSchema>,
+  "id" | "date" | "description"
+>;
+type AttendanceWithMeetings = Array<
+  Attendance & {
+    meeting: Meeting;
+  }
+>;
+
+const LeaderDashboard = async () => {
+  const session = await getServerAuthSession();
+  if (!session) {
+    throw new Error("No active leader session");
+  }
+
+  const leader = await db.query.users.findFirst({
+    where: (user, { eq }) => eq(user.id, session.user.id),
+    with: {
+      groups: {
+        columns: {
+          groupId: true,
+        },
+        limit: 1,
+      },
+    },
+  });
+
+  const participants = await db.query.participants.findMany({
+    where: (participant, { eq }) =>
+      eq(participant.groupId, leader?.groups[0]?.groupId ?? ""),
+    columns: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      phone: true,
+    },
+    with: {
+      attendance: {
+        columns: { id: true },
+        with: {
+          meeting: {
+            columns: {
+              id: true,
+              date: true,
+              description: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: (participant, { asc }) => [asc(participant.firstName)],
+  });
+
   return (
     <>
       <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 md:gap-8 xl:grid-cols-4">
@@ -114,98 +180,78 @@ const LeaderDashboard = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Attendance</TableHead>
+                <TableHead>First Name</TableHead>
+                <TableHead>Last Name</TableHead>
+                <TableHead className="hidden lg:table-cell">Email</TableHead>
+                <TableHead className="hidden lg:table-cell">Phone</TableHead>
+                <TableHead>Form</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell>John Doe</TableCell>
-                <TableCell>email</TableCell>
-                <TableCell>phone</TableCell>
-                <TableCell className="flex h-[37px] items-center">
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>John Doe</TableCell>
-                <TableCell>email</TableCell>
-                <TableCell>phone</TableCell>
-                <TableCell className="flex h-[37px] items-center">
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot variant={"red"} />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>John Doe</TableCell>
-                <TableCell>email</TableCell>
-                <TableCell>phone</TableCell>
-                <TableCell className="flex h-[37px] items-center">
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>John Doe</TableCell>
-                <TableCell>email</TableCell>
-                <TableCell>phone</TableCell>
-                <TableCell className="flex h-[37px] items-center">
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot variant={"red"} />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>John Doe</TableCell>
-                <TableCell>email</TableCell>
-                <TableCell>phone</TableCell>
-                <TableCell className="flex h-[37px] items-center">
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>John Doe</TableCell>
-                <TableCell>email</TableCell>
-                <TableCell>phone</TableCell>
-                <TableCell className="flex h-[37px] items-center">
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot variant={"red"} />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>John Doe</TableCell>
-                <TableCell>email</TableCell>
-                <TableCell>phone</TableCell>
-                <TableCell className="flex h-[37px] items-center">
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot />
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>John Doe</TableCell>
-                <TableCell>email</TableCell>
-                <TableCell>phone</TableCell>
-                <TableCell className="flex h-[37px] items-center">
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot className="mr-1" />
-                  <ColoredDot variant={"red"} />
-                </TableCell>
-              </TableRow>
+              {participants.map((participant) => {
+                return (
+                  <TableRow key={participant.id}>
+                    <TableCell>{participant.firstName}</TableCell>
+                    <TableCell>{participant.lastName}</TableCell>
+                    <TableCell className="hidden lg:table-cell">
+                      {participant.email}
+                    </TableCell>
+                    <TableCell className="hidden lg:table-cell">
+                      {participant.phone &&
+                        parsePhoneNumberFromString(
+                          participant.phone,
+                          "US",
+                        )?.formatNational()}
+                    </TableCell>
+                    <TableCell className="flex h-[37px] items-center">
+                      <Attendance attendance={participant.attendance} />
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
     </>
+  );
+};
+
+const Attendance = ({ attendance }: { attendance: AttendanceWithMeetings }) => {
+  dayjs.extend(weekday);
+  dayjs.extend(utc);
+  const lastMonday = dayjs().day(1);
+
+  const recentMeetings = [
+    lastMonday.subtract(14, "days").utc().format("MM/DD/YYYY"),
+    lastMonday.subtract(7, "days").utc().format("MM/DD/YYYY"),
+    lastMonday.utc().format("MM/DD/YYYY"),
+  ];
+
+  const recentAttendance = attendance
+    .slice(-3)
+    .map((attendance) =>
+      dayjs(attendance.meeting.date).utc().format("MM/DD/YYYY"),
+    );
+
+  const present = recentMeetings.map((meeting) => {
+    if (recentAttendance.includes(meeting)) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  return (
+    <div className="flex gap-1">
+      {present.map((wasPresent, index) =>
+        wasPresent ? (
+          <ColoredDot key={index} />
+        ) : (
+          <ColoredDot key={index} variant="red" />
+        ),
+      )}
+    </div>
   );
 };
 
