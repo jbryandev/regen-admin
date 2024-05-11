@@ -90,6 +90,7 @@ export const scheduleItems = createTable("schedule_item", {
 export const templatesToItems = createTable("templates_to_items", {
   id: uuid("id").defaultRandom().primaryKey(),
   templateId: uuid("template_id").references(() => scheduleTemplates.id),
+  itemId: uuid("item_id").references(() => scheduleItems.id),
   weekNumber: integer("week_number").notNull(),
   description: text("description"),
 });
@@ -167,16 +168,33 @@ export const attendanceRelations = relations(attendance, ({ one }) => ({
   }),
 }));
 
-export const scheduleTemplateRelations = relations(
-  scheduleTemplates,
-  ({ many }) => ({
-    scheduleItems: many(scheduleItems),
+export const participantToStruggleRelations = relations(
+  participantsToStruggles,
+  ({ one }) => ({
+    struggle: one(struggles, {
+      fields: [participantsToStruggles.struggleId],
+      references: [struggles.id],
+    }),
+    participant: one(participants, {
+      fields: [participantsToStruggles.participantId],
+      references: [participants.id],
+    }),
   }),
 );
 
-export const struggleRelations = relations(struggles, ({ many }) => ({
-  participantsToStruggles: many(participantsToStruggles),
-}));
+export const templatesToItemsRelations = relations(
+  templatesToItems,
+  ({ one }) => ({
+    template: one(scheduleTemplates, {
+      fields: [templatesToItems.templateId],
+      references: [scheduleTemplates.id],
+    }),
+    item: one(scheduleItems, {
+      fields: [templatesToItems.itemId],
+      references: [scheduleItems.id],
+    }),
+  }),
+);
 
 // Schema
 export const participantSchema = createSelectSchema(participants);
