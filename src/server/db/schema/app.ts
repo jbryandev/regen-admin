@@ -35,6 +35,23 @@ export const mentors = createTable("mentor", {
   phone: varchar("phone", { length: 15 }),
 });
 
+export const struggles = createTable("struggle", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+});
+
+export const participantsToStruggles = createTable(
+  "participants_to_struggles",
+  {
+    participantId: uuid("participant_id")
+      .notNull()
+      .references(() => participants.id),
+    struggleId: uuid("struggle_id")
+      .notNull()
+      .references(() => struggles.id),
+  },
+);
+
 export const groups = createTable("group", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 255 }),
@@ -85,6 +102,7 @@ export const scheduleItems = createTable("schedule_item", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
+  video: varchar("video", { length: 255 }),
 });
 
 export const templatesToItems = createTable("templates_to_items", {
@@ -95,22 +113,12 @@ export const templatesToItems = createTable("templates_to_items", {
   description: text("description"),
 });
 
-export const struggles = createTable("struggle", {
+export const foundationVerses = createTable("foundation_verses", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
+  step: integer("step").notNull(),
+  verse: varchar("verse", { length: 255 }).notNull(),
+  text: text("text").notNull(),
 });
-
-export const participantsToStruggles = createTable(
-  "participants_to_struggles",
-  {
-    participantId: uuid("participant_id")
-      .notNull()
-      .references(() => participants.id),
-    struggleId: uuid("struggle_id")
-      .notNull()
-      .references(() => struggles.id),
-  },
-);
 
 // Relations
 export const participantRelations = relations(
@@ -154,6 +162,10 @@ export const meetingRelations = relations(meetings, ({ one }) => ({
   group: one(groups, {
     fields: [meetings.groupId],
     references: [groups.id],
+  }),
+  scheduleItem: one(scheduleItems, {
+    fields: [meetings.scheduleItemId],
+    references: [scheduleItems.id],
   }),
 }));
 
@@ -209,3 +221,4 @@ export const participantToStruggleSchema = createSelectSchema(
   participantsToStruggles,
 );
 export const userToGroupSchema = createSelectSchema(usersToGroups);
+export const foundationVersesSchema = createSelectSchema(foundationVerses);
