@@ -12,24 +12,22 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { db } from "@/server/db";
-import { type groupSchema } from "@/server/db/schema/app";
+import {
+  type meetingSchema,
+  type scheduleItemSchema,
+} from "@/server/db/schema/app";
 
-type Group = z.infer<typeof groupSchema>;
+type Meeting = z.infer<typeof meetingSchema>;
+type ScheduleItem = z.infer<typeof scheduleItemSchema>;
+type MeetingWithScheduleItem = Meeting & {
+  scheduleItem: ScheduleItem;
+};
 
-const ThisWeekCard = async ({ group }: { group: Group }) => {
-  const groupMeetings = await db.query.meetings.findMany({
-    where: (meeting, { eq }) => eq(meeting.groupId, group.id),
-    orderBy: (meeting, { asc }) => [asc(meeting.date)],
-    with: {
-      scheduleItem: true,
-    },
-  });
-
-  const currentWeek = groupMeetings.find((meeting) =>
-    dayjs().isBefore(dayjs(meeting.date)),
-  );
-
+const ThisWeekCard = async ({
+  currentWeek,
+}: {
+  currentWeek?: MeetingWithScheduleItem;
+}) => {
   return (
     <Card className="order-1 flex flex-col justify-between">
       <CardHeader className="flex-none">
@@ -38,15 +36,18 @@ const ThisWeekCard = async ({ group }: { group: Group }) => {
           <CalendarDays className="h-4 w-4 text-muted-foreground" />
         </CardDescription>
         <CardTitle className="text-xl">
-          {currentWeek?.scheduleItem.name}
+          {currentWeek?.scheduleItem.name ?? "Nothing of note"}
         </CardTitle>
       </CardHeader>
       <CardContent className="grow text-sm text-muted-foreground">
-        {currentWeek?.scheduleItem.description}
+        {currentWeek?.scheduleItem.description ?? "Enjoy the week off!"}
       </CardContent>
       <CardFooter className="flex-none gap-2">
-        {currentWeek?.scheduleItem && (
-          <TrainingVideoPopup scheduleItem={currentWeek?.scheduleItem}>
+        {currentWeek?.scheduleItem.video && (
+          <TrainingVideoPopup
+            video={currentWeek?.scheduleItem.video}
+            title={currentWeek.scheduleItem.name}
+          >
             <Button variant={"secondary"} className="w-full">
               Watch Training
             </Button>

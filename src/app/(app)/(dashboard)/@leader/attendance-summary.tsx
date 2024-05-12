@@ -1,6 +1,5 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import weekday from "dayjs/plugin/weekday";
 import { type z } from "zod";
 
 import { ColoredDot } from "@/components/colored-dot";
@@ -22,24 +21,19 @@ type AttendanceWithMeetings = Array<
 
 const AttendanceSummary = ({
   attendance,
+  recentMeetings,
 }: {
   attendance: AttendanceWithMeetings;
+  recentMeetings: string[];
 }) => {
-  dayjs.extend(weekday);
   dayjs.extend(utc);
-  const lastMonday = dayjs().day(1);
-
-  const recentMeetings = [
-    lastMonday.subtract(14, "days").format("MM/DD/YYYY"),
-    lastMonday.subtract(7, "days").format("MM/DD/YYYY"),
-    lastMonday.format("MM/DD/YYYY"),
-  ];
 
   const recentAttendance = attendance
     .slice(-3)
     .map((attendance) =>
       dayjs(attendance.meeting.date).utc().format("MM/DD/YYYY"),
     );
+  // console.log("recentAttendance:", recentAttendance);
 
   const present = recentMeetings.map((meeting) => {
     if (recentAttendance.includes(meeting)) {

@@ -12,16 +12,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { type scheduleItemsSchema } from "@/server/db/schema/app";
-
-type ScheduleItem = z.infer<typeof scheduleItemsSchema>;
 
 const TrainingVideoPopup = ({
   children,
-  scheduleItem,
+  video,
+  title,
 }: {
   children: React.ReactNode;
-  scheduleItem: ScheduleItem;
+  video: string;
+  title?: string;
 }) => {
   return (
     <Dialog>
@@ -29,11 +28,9 @@ const TrainingVideoPopup = ({
       <DialogContent className="w-full">
         <DialogHeader>
           <DialogTitle>Leader Training Video</DialogTitle>
-          <DialogDescription>{scheduleItem.name}</DialogDescription>
+          <DialogDescription>{title}</DialogDescription>
         </DialogHeader>
-        {scheduleItem.video && (
-          <iframe src={scheduleItem.video} allowFullScreen />
-        )}
+        {video && <iframe src={video} allowFullScreen />}
         <DialogFooter>
           <DialogClose asChild>
             <Button>Close</Button>

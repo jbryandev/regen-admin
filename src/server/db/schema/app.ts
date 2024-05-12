@@ -100,6 +100,7 @@ export const scheduleTemplates = createTable("schedule_template", {
 
 export const scheduleItems = createTable("schedule_item", {
   id: uuid("id").defaultRandom().primaryKey(),
+  step: integer("step"),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
   video: varchar("video", { length: 255 }),
@@ -113,10 +114,18 @@ export const templatesToItems = createTable("templates_to_items", {
   description: text("description"),
 });
 
-export const foundationVerses = createTable("foundation_verses", {
+export const tasks = createTable("task", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  scheduleItemId: uuid("item_id").references(() => scheduleItems.id, {
+    onDelete: "cascade",
+  }),
+  description: varchar("description", { length: 255 }).notNull(),
+});
+
+export const verses = createTable("verse", {
   id: uuid("id").defaultRandom().primaryKey(),
   step: integer("step").notNull(),
-  verse: varchar("verse", { length: 255 }).notNull(),
+  title: varchar("verse", { length: 255 }).notNull(),
   text: text("text").notNull(),
 });
 
@@ -208,6 +217,17 @@ export const templatesToItemsRelations = relations(
   }),
 );
 
+export const scheduleItemRelations = relations(scheduleItems, ({ many }) => ({
+  tasks: many(tasks),
+}));
+
+export const taskRelations = relations(tasks, ({ one }) => ({
+  scheduleItem: one(scheduleItems, {
+    fields: [tasks.scheduleItemId],
+    references: [scheduleItems.id],
+  }),
+}));
+
 // Schema
 export const participantSchema = createSelectSchema(participants);
 export const mentorSchema = createSelectSchema(mentors);
@@ -215,10 +235,11 @@ export const groupSchema = createSelectSchema(groups);
 export const meetingSchema = createSelectSchema(meetings);
 export const attendanceSchema = createSelectSchema(attendance);
 export const scheduleTemplateSchema = createSelectSchema(scheduleTemplates);
-export const scheduleItemsSchema = createSelectSchema(scheduleItems);
+export const scheduleItemSchema = createSelectSchema(scheduleItems);
 export const struggleSchema = createSelectSchema(struggles);
 export const participantToStruggleSchema = createSelectSchema(
   participantsToStruggles,
 );
 export const userToGroupSchema = createSelectSchema(usersToGroups);
-export const foundationVersesSchema = createSelectSchema(foundationVerses);
+export const verseSchema = createSelectSchema(verses);
+export const taskSchema = createSelectSchema(tasks);
