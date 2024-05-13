@@ -1,5 +1,8 @@
 "use client";
 
+import { Bell, Mail, User, FileText } from "lucide-react";
+import Link from "next/link";
+
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -11,8 +14,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { Bell, Mail, User, FileText } from "lucide-react";
-import Link from "next/link";
 
 const notifications = [
   {
@@ -43,7 +44,6 @@ const unreadNotifications = notifications.filter(
 );
 
 function markAllRead() {
-  console.log("clicked");
   notifications.forEach((item) => {
     if (item.read === false) {
       item.read = true;

@@ -33,7 +33,6 @@ const AttendanceSummary = ({
     .map((attendance) =>
       dayjs(attendance.meeting.date).utc().format("MM/DD/YYYY"),
     );
-  // console.log("recentAttendance:", recentAttendance);
 
   const present = recentMeetings.map((meeting) => {
     if (recentAttendance.includes(meeting)) {
