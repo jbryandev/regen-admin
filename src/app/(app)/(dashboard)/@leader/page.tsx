@@ -57,12 +57,13 @@ const LeaderDashboard = async () => {
   });
 
   const recentMeetings = meetings
-    .filter((meeting) => dayjs(meeting.date).isBefore(dayjs()))
+    .filter((meeting) => dayjs(meeting.date).utc().isBefore(dayjs().utc(), "d"))
     .slice(-3)
     .map((meeting) => dayjs(meeting.date).utc().format("MM/DD/YYYY"));
+  console.log("recentMeetings:", recentMeetings);
 
   const currentWeek = meetings.find((meeting) =>
-    dayjs().isBefore(dayjs(meeting.date)),
+    dayjs(meeting.date).isAfter(recentMeetings.slice(-1)[0]),
   );
 
   const participants = await db.query.participants.findMany({
@@ -90,7 +91,6 @@ const LeaderDashboard = async () => {
     },
     orderBy: (participant, { asc }) => [asc(participant.firstName)],
   });
-  console.log(participants[0]?.attendance[0]);
 
   return (
     <>
