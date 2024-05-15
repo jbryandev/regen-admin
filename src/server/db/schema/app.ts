@@ -20,7 +20,7 @@ export const participants = createTable("participant", {
   email: varchar("email", { length: 255 }).notNull(),
   phone: varchar("phone", { length: 15 }),
   image: varchar("image", { length: 255 }),
-  dob: date("dob", { mode: "date" }),
+  dob: date("dob", { mode: "string" }),
   gender: genderEnum("gender"),
   married: boolean("married"),
   mentorId: uuid("mentor_id").references(() => mentors.id),
@@ -75,7 +75,7 @@ export const meetings = createTable("meeting", {
   scheduleItemId: uuid("schedule_item_id")
     .references(() => scheduleItems.id)
     .notNull(),
-  date: date("date", { mode: "date" }).notNull(),
+  date: date("date", { mode: "string" }).notNull(),
   description: text("description"),
 });
 
@@ -104,6 +104,7 @@ export const scheduleItems = createTable("schedule_item", {
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
   video: varchar("video", { length: 255 }),
+  isCancelled: boolean("isCancelled"),
 });
 
 export const templatesToItems = createTable("templates_to_items", {
