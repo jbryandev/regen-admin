@@ -1,21 +1,32 @@
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import { type z } from "zod";
 
 import { ColoredDot } from "@/components/colored-dot";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  type scheduleItemSchema,
   type attendanceSchema,
   type meetingSchema,
 } from "@/server/db/schema/app";
 
 type Attendance = Pick<z.infer<typeof attendanceSchema>, "id">;
+
 type Meeting = Pick<
   z.infer<typeof meetingSchema>,
   "id" | "date" | "description"
 >;
-type AttendanceWithMeetings = Array<
+
+type ScheduleItem = z.infer<typeof scheduleItemSchema>;
+
+type CombinedAttendance = Array<
   Attendance & {
-    meeting: Meeting;
+    meeting: Meeting & {
+      scheduleItem: ScheduleItem;
+    };
   }
 >;
 
@@ -23,34 +34,37 @@ const AttendanceSummary = ({
   attendance,
   recentMeetings,
 }: {
-  attendance: AttendanceWithMeetings;
+  attendance: CombinedAttendance;
   recentMeetings: string[];
 }) => {
-  dayjs.extend(utc);
-
   const recentAttendance = attendance
     .slice(-3)
-    .map((attendance) =>
-      dayjs(attendance.meeting.date).utc().format("MM/DD/YYYY"),
-    );
+    .map((attendance) => attendance.meeting.date);
 
   const present = recentMeetings.map((meeting) => {
     if (recentAttendance.includes(meeting)) {
-      return true;
+      return { present: true, date: meeting };
     } else {
-      return false;
+      return { present: false, date: meeting };
     }
   });
 
   return (
     <div className="flex gap-1">
-      {present.map((wasPresent, index) =>
-        wasPresent ? (
-          <ColoredDot key={index} />
-        ) : (
-          <ColoredDot key={index} variant="red" />
-        ),
-      )}
+      <TooltipProvider>
+        {present.map((meeting, index) => (
+          <Tooltip key={index}>
+            <TooltipTrigger asChild>
+              {meeting.present ? (
+                <ColoredDot />
+              ) : (
+                <ColoredDot key={index} variant="red" />
+              )}
+            </TooltipTrigger>
+            <TooltipContent>{meeting.date}</TooltipContent>
+          </Tooltip>
+        ))}
+      </TooltipProvider>
     </div>
   );
 };
