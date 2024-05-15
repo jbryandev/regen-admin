@@ -1,13 +1,14 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import parsePhoneNumberFromString from "libphonenumber-js";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import AttendanceSummary from "@/app/(app)/(dashboard)/@leader/attendance-summary";
 import ChecklistCard from "@/app/(app)/(dashboard)/@leader/checklist-card";
 import MemoryVerseCard from "@/app/(app)/(dashboard)/@leader/memory-verse-card";
 import ThisWeekCard from "@/app/(app)/(dashboard)/@leader/this-week-card";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -57,13 +58,12 @@ const LeaderDashboard = async () => {
   });
 
   const recentMeetings = meetings
-    .filter((meeting) => dayjs(meeting.date).utc().isBefore(dayjs().utc(), "d"))
+    .filter((meeting) => new Date(meeting.date) < new Date())
     .slice(-3)
-    .map((meeting) => dayjs(meeting.date).utc().format("MM/DD/YYYY"));
-  console.log("recentMeetings:", recentMeetings);
+    .map((meeting) => meeting.date);
 
-  const currentWeek = meetings.find((meeting) =>
-    dayjs(meeting.date).isAfter(recentMeetings.slice(-1)[0]),
+  const currentWeek = meetings.find(
+    (meeting) => new Date(meeting.date) > new Date(recentMeetings.slice(-1)[0]),
   );
 
   const participants = await db.query.participants.findMany({
@@ -85,6 +85,9 @@ const LeaderDashboard = async () => {
               date: true,
               description: true,
             },
+            with: {
+              scheduleItem: true,
+            },
           },
         },
       },
@@ -104,8 +107,18 @@ const LeaderDashboard = async () => {
           <div className="grid items-center justify-between gap-4 sm:grid-cols-2">
             <CardTitle className="text-xl">Group Summary</CardTitle>
             <div className="flex gap-2 sm:justify-end">
-              <Button variant={"secondary"}>Take Attendance</Button>
-              <Button>Group Details</Button>
+              <Link
+                href={`/attendance/${currentWeek?.id}`}
+                className={buttonVariants({ variant: "secondary" })}
+              >
+                Take Attendance
+              </Link>
+              <Link
+                href={`/groups/${group?.id}`}
+                className={buttonVariants({ variant: "default" })}
+              >
+                Group Details
+              </Link>
             </div>
           </div>
         </CardHeader>
