@@ -7,9 +7,8 @@ import { cn } from "@/lib/utils";
 const dotVariants = cva("rounded-full", {
   variants: {
     variant: {
-      default: "bg-regen-primary",
-      secondary: "bg-regen-secondary",
-      red: "bg-regen-red",
+      default: "bg-primary",
+      red: "border border-primary",
     },
     size: {
       default: "h-3 w-3",

@@ -25,10 +25,9 @@ const config = {
       },
       colors: {
         regen: {
-          primary: "#A9C23F",
-          secondary: "#48565A",
-          background: "#F2F0EC",
-          red: "#B1443C",
+          DEFAULT: "hsl(var(--regen))",
+          gray: "#48565A",
+          cream: "#F2F0EC",
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

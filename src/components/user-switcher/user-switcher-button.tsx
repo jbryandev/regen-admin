@@ -14,10 +14,10 @@ type Props = {
     image: string | null;
     role: string | null;
   };
-  disabled: boolean;
+  active: boolean;
 };
 
-const UserSwitcherButton = ({ user, disabled }: Props) => {
+const UserSwitcherButton = ({ user, active }: Props) => {
   const [isPending, setIsPending] = useState(false);
 
   const handleClick = async () => {
@@ -28,13 +28,13 @@ const UserSwitcherButton = ({ user, disabled }: Props) => {
 
   return (
     <Button
-      variant={disabled ? "default" : "secondary"}
-      className="flex w-28 gap-2"
-      disabled={disabled || isPending}
+      variant={active ? "default" : "secondary"}
+      className="flex w-28 gap-2 disabled:opacity-100"
+      disabled={active || isPending}
       onClick={handleClick}
     >
       {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-      {disabled ? "Signed in" : "Switch"}
+      {active ? "Signed in" : "Switch"}
     </Button>
   );
 };
