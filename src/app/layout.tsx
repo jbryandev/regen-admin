@@ -1,5 +1,4 @@
 import { Inter } from "next/font/google";
-// import Script from "next/script";
 import { StrictMode } from "react";
 
 import { ThemeProvider } from "@/components/theme-provider";
@@ -20,7 +19,6 @@ export default function RootLayout({
   return (
     <StrictMode>
       <html lang="en" suppressHydrationWarning>
-        {/* <Script src="http://192.168.1.34:8097" /> */}
         <body className={`font-sans ${inter.variable} h-full`}>
           <ThemeProvider
             attribute="class"
