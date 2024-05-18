@@ -6,9 +6,8 @@ import { type z } from "zod";
 import {
   markNotPresent,
   markPresent,
-} from "@/app/(app)/attendance/[meetingId]/actions";
+} from "@/app/(app)/attendance/[meetingId]/attendance-actions";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import {
   type meetingSchema,
   type attendanceSchema,
@@ -43,7 +42,7 @@ const CheckInButton = ({
 
   return (
     <Button
-      onClick={handleClick}
+      formAction={handleClick}
       variant={present ? "default" : "outline"}
       size={"xl"}
       className="flex items-center justify-between"

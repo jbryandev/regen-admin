@@ -63,7 +63,7 @@ const AttendancePage = async ({
         },
       },
     },
-    orderBy: (participant, { asc }) => [asc(participant.firstName)],
+    orderBy: (participant, { asc }) => [asc(participant.lastName)],
   });
 
   return (
