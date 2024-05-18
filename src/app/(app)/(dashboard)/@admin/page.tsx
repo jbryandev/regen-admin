@@ -38,9 +38,7 @@ const AdminDashboard = async () => {
           <CardTitle className="text-3xl">{groups.length}</CardTitle>
         </CardHeader>
         <CardFooter className="flex-none gap-2">
-          <Button variant={"secondary"} className="w-full">
-            View groups
-          </Button>
+          <Button className="w-full">View groups</Button>
         </CardFooter>
       </Card>
       <Card className="flex flex-col justify-between">
@@ -52,9 +50,7 @@ const AdminDashboard = async () => {
           <CardTitle className="text-3xl">{participants.length}</CardTitle>
         </CardHeader>
         <CardFooter className="flex-none gap-2">
-          <Button variant={"secondary"} className="w-full">
-            View participants
-          </Button>
+          <Button className="w-full">View participants</Button>
         </CardFooter>
       </Card>
       <Card className="flex flex-col justify-between">
@@ -66,9 +62,7 @@ const AdminDashboard = async () => {
           <CardTitle className="text-3xl">{leaders.length}</CardTitle>
         </CardHeader>
         <CardFooter className="flex-none gap-2">
-          <Button variant={"secondary"} className="w-full">
-            View leaders
-          </Button>
+          <Button className="w-full">View leaders</Button>
         </CardFooter>
       </Card>
       <Card className="flex flex-col justify-between">
@@ -80,9 +74,7 @@ const AdminDashboard = async () => {
           <CardTitle className="text-3xl">{coaches.length}</CardTitle>
         </CardHeader>
         <CardFooter className="flex-none gap-2">
-          <Button variant={"secondary"} className="w-full">
-            View coaches
-          </Button>
+          <Button className="w-full">View coaches</Button>
         </CardFooter>
       </Card>
     </div>

@@ -7,6 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { formatDate } from "@/lib/utils";
 import {
   type scheduleItemSchema,
   type attendanceSchema,
@@ -61,7 +62,7 @@ const AttendanceSummary = ({
                 <ColoredDot key={index} variant="red" />
               )}
             </TooltipTrigger>
-            <TooltipContent>{meeting.date}</TooltipContent>
+            <TooltipContent>{formatDate(meeting.date)}</TooltipContent>
           </Tooltip>
         ))}
       </TooltipProvider>
