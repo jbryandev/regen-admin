@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+// import { Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import ModeToggle from "@/components/mode-toggle";
 import { MobileNav, SidebarNav } from "@/components/navigation";
 // import NotificationsMenu from "@/components/notifications-menu";
-import { Input } from "@/components/ui/input";
+// import { Input } from "@/components/ui/input";
 import UserMenu from "@/components/user-menu";
 import UserSwitcher from "@/components/user-switcher/user-switcher";
 import regen from "@/public/ReGen_Icon_Primary.png";
@@ -53,7 +53,7 @@ export default async function AppLayout({
         <header className="flex h-14 items-center gap-3 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
           <MobileNav />
           <div className="w-full flex-1">
-            <form>
+            {/* <form>
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -63,7 +63,7 @@ export default async function AppLayout({
                   disabled={true}
                 />
               </div>
-            </form>
+            </form> */}
           </div>
           {/* <NotificationsMenu /> */}
           <ModeToggle />
