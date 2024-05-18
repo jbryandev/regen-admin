@@ -7,7 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { formatDate } from "@/lib/utils";
+import { fixedDate } from "@/lib/utils";
 import {
   type scheduleItemSchema,
   type attendanceSchema,
@@ -62,7 +62,9 @@ const AttendanceSummary = ({
                 <ColoredDot key={index} variant="red" />
               )}
             </TooltipTrigger>
-            <TooltipContent>{formatDate(meeting.date)}</TooltipContent>
+            <TooltipContent>
+              {fixedDate(meeting.date).toLocaleDateString()}
+            </TooltipContent>
           </Tooltip>
         ))}
       </TooltipProvider>

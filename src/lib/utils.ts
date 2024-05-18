@@ -34,3 +34,9 @@ export const zPhone = z.string().transform((arg, ctx) => {
   });
   return z.NEVER;
 });
+
+export function fixedDate(date: string) {
+  const givenDate = new Date(date);
+  const offset = givenDate.getTimezoneOffset() * 60 * 1000;
+  return new Date(givenDate.getTime() + offset);
+}
