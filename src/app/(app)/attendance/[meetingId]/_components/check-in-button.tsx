@@ -6,7 +6,7 @@ import { type z } from "zod";
 import {
   markNotPresent,
   markPresent,
-} from "@/app/(app)/attendance/[meetingId]/attendance-actions";
+} from "@/app/(app)/attendance/[meetingId]/_components/attendance-actions";
 import { Button } from "@/components/ui/button";
 import {
   type meetingSchema,

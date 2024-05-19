@@ -1,8 +1,8 @@
 import { and, lte } from "drizzle-orm";
 import { redirect } from "next/navigation";
 
-import CheckInButton from "@/app/(app)/attendance/[meetingId]/check-in-button";
-import MeetingSelector from "@/app/(app)/attendance/[meetingId]/meeting-selector";
+import CheckInButton from "@/app/(app)/attendance/[meetingId]/_components/check-in-button";
+import MeetingSelector from "@/app/(app)/attendance/[meetingId]/_components/meeting-selector";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
 

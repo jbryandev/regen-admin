@@ -4,10 +4,10 @@ import parsePhoneNumberFromString from "libphonenumber-js";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import AttendanceSummary from "@/app/(app)/(dashboard)/@leader/attendance-summary";
-import ChecklistCard from "@/app/(app)/(dashboard)/@leader/checklist-card";
-import MemoryVerseCard from "@/app/(app)/(dashboard)/@leader/memory-verse-card";
-import ThisWeekCard from "@/app/(app)/(dashboard)/@leader/this-week-card";
+import AttendanceSummary from "@/app/(app)/(dashboard)/@leader/_components/attendance-summary";
+import ChecklistCard from "@/app/(app)/(dashboard)/@leader/_components/checklist-card";
+import MemoryVerseCard from "@/app/(app)/(dashboard)/@leader/_components/memory-verse-card";
+import ThisWeekCard from "@/app/(app)/(dashboard)/@leader/_components/this-week-card";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
