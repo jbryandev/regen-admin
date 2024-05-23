@@ -57,7 +57,11 @@ const LeaderDashboard = async () => {
     },
   });
 
-  const recentMeetings = meetings
+  const meetingsHeld = meetings.filter(
+    (meeting) => !meeting.scheduleItem.isCancelled === true,
+  );
+
+  const recentMeetings = meetingsHeld
     .filter((meeting) => new Date(meeting.date) < new Date())
     .slice(-3)
     .map((meeting) => meeting.date);
