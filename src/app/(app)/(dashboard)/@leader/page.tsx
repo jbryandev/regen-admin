@@ -67,7 +67,8 @@ const LeaderDashboard = async () => {
     .map((meeting) => meeting.date);
 
   const currentWeek = meetings.find(
-    (meeting) => new Date(meeting.date) > new Date(recentMeetings.slice(-1)[0]),
+    (meeting) =>
+      new Date(meeting.date) > new Date(recentMeetings.slice(-1)[0] ?? ""),
   );
 
   const participants = await db.query.participants.findMany({
@@ -96,7 +97,7 @@ const LeaderDashboard = async () => {
         },
       },
     },
-    orderBy: (participant, { asc }) => [asc(participant.firstName)],
+    orderBy: (participant, { asc }) => [asc(participant.lastName)],
   });
 
   return (
