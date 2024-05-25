@@ -31,8 +31,6 @@ const Attendance = async ({
     },
   });
 
-  console.log(meeting.scheduleItem);
-
   return meeting.scheduleItem.isCancelled ? (
     <p>This meeting was cancelled. Attendance is not needed.</p>
   ) : (

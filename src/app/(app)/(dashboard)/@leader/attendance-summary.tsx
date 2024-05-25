@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { type z } from "zod";
 
 import { ColoredDot } from "@/components/colored-dot";
@@ -38,12 +39,10 @@ const AttendanceSummary = ({
   attendance: CombinedAttendance;
   recentMeetings: string[];
 }) => {
-  const recentAttendance = attendance
-    .slice(-3)
-    .map((attendance) => attendance.meeting.date);
+  const attendedDates = attendance.map((attendance) => attendance.meeting.date);
 
-  const present = recentMeetings.map((meeting) => {
-    if (recentAttendance.includes(meeting)) {
+  const wasPresent = recentMeetings.map((meeting) => {
+    if (attendedDates.includes(meeting)) {
       return { present: true, date: meeting };
     } else {
       return { present: false, date: meeting };
@@ -53,7 +52,7 @@ const AttendanceSummary = ({
   return (
     <div className="flex gap-1">
       <TooltipProvider>
-        {present.map((meeting, index) => (
+        {wasPresent.map((meeting, index) => (
           <Tooltip key={index}>
             <TooltipTrigger asChild>
               {meeting.present ? (
