@@ -1,7 +1,7 @@
 "use client";
 
 import { Circle, CircleCheck, Loader2 } from "lucide-react";
-import { useTransition } from "react";
+import { useOptimistic, useTransition } from "react";
 import { type z } from "zod";
 
 import { type MeetingWithScheduleItem } from "@/app/(app)/attendance/[meetingId]/attendance";
@@ -26,29 +26,28 @@ const AttendanceButton = ({
   meeting: MeetingWithScheduleItem;
   present: boolean;
 }) => {
-  const [isPending, startTransition] = useTransition();
+  const [optimisticPresent, setOptimisticPresent] = useOptimistic(
+    present,
+    (_, newPresent: boolean) => newPresent,
+  );
 
   const participantName = `${participant.firstName} ${participant.lastName}`;
 
-  const handleClick = () => {
-    startTransition(async () => {
-      present
-        ? await deleteAttendance(meeting, participant)
-        : await addAttendance(meeting, participant);
-    });
+  const handleClick = async () => {
+    setOptimisticPresent(!present);
+    present
+      ? await deleteAttendance(meeting, participant)
+      : await addAttendance(meeting, participant);
   };
 
   return (
     <Button
-      variant={present ? "default" : "outline"}
+      variant={optimisticPresent ? "default" : "outline"}
       className="flex items-center justify-between py-8"
       onClick={handleClick}
-      disabled={isPending}
     >
       {participantName}
-      {isPending ? (
-        <Loader2 className="h-5 w-5 animate-spin" />
-      ) : present ? (
+      {optimisticPresent ? (
         <CircleCheck className="h-5 w-5" />
       ) : (
         <Circle className="h-5 w-5" />
