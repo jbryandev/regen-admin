@@ -3,8 +3,8 @@
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-import type { MeetingWithScheduleItem } from "@/app/(app)/attendance/[meetingId]/attendance";
-import { type Participant } from "@/app/(app)/attendance/[meetingId]/attendance-button";
+import type { MeetingWithScheduleItem } from "@/app/(app)/groups/[groupSlug]/meetings/[meetingSlug]/attendance";
+import { type Participant } from "@/app/(app)/groups/[groupSlug]/meetings/[meetingSlug]/attendance-button";
 import { db } from "@/server/db";
 import { attendance } from "@/server/db/schema/app";
 

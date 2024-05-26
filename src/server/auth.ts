@@ -22,10 +22,7 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      role: {
-        name: string;
-        isAdmin: boolean;
-      };
+      role: string;
     } & DefaultSession["user"];
   }
 }
@@ -40,14 +37,13 @@ export const authOptions: NextAuthOptions = {
     session: async ({ session, user }) => {
       const userInfo = await db.query.users.findFirst({
         where: (model, { eq }) => eq(model.id, user.id),
-        with: { role: true },
       });
       return {
         ...session,
         user: {
           ...session.user,
           id: user.id,
-          role: { name: userInfo?.role.name, isAdmin: userInfo?.role.isAdmin },
+          role: userInfo?.role,
         },
       };
     },

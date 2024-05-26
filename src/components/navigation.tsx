@@ -30,7 +30,7 @@ export const navigation = [
     path: "/",
   },
   {
-    title: "Group",
+    title: "Groups",
     icon: Users,
     path: "/groups",
   },

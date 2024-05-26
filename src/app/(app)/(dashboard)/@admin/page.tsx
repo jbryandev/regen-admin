@@ -10,22 +10,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { db } from "@/server/db";
-import { roles, users } from "@/server/db/schema/auth";
+import { users } from "@/server/db/schema/auth";
 
 const AdminDashboard = async () => {
   const groups = await db.query.groups.findMany();
   const participants = await db.query.participants.findMany();
-  const leaders = await db
-    .select()
-    .from(users)
-    .innerJoin(roles, eq(users.roleId, roles.id))
-    .where(eq(roles.name, "Group Leader"));
-
-  const coaches = await db
-    .select()
-    .from(users)
-    .innerJoin(roles, eq(users.roleId, roles.id))
-    .where(eq(roles.name, "Coach"));
+  const leaders = await db.select().from(users).where(eq(users.role, "leader"));
+  const coaches = await db.select().from(users).where(eq(users.role, "coach"));
 
   return (
     <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 md:gap-8 xl:grid-cols-4">

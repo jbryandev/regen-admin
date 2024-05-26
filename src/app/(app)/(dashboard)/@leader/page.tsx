@@ -113,13 +113,13 @@ const LeaderDashboard = async () => {
             <CardTitle className="text-xl">Group Summary</CardTitle>
             <div className="flex gap-2 sm:justify-end">
               <Link
-                href={`/attendance/${currentWeek?.id}`}
+                href={`/groups/${group?.slug}/meetings/${currentWeek?.slug}`}
                 className={buttonVariants({ variant: "secondary" })}
               >
                 Take Attendance
               </Link>
               <Link
-                href={`/groups/${group?.id}`}
+                href={`/groups/${group?.slug}`}
                 className={buttonVariants({ variant: "default" })}
               >
                 Group Details

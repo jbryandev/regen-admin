@@ -2,22 +2,24 @@
 
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { type z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { switchUser } from "@/components/user-switcher/actions";
+import { type userSchema } from "@/server/db/schema/auth";
 
-type Props = {
-  user: {
-    id: string;
-    name: string | null;
-    email: string;
-    image: string | null;
-    role: string | null;
-  };
+type User = Pick<
+  z.infer<typeof userSchema>,
+  "id" | "name" | "email" | "image" | "role"
+>;
+
+const UserSwitcherButton = ({
+  user,
+  active,
+}: {
+  user: User;
   active: boolean;
-};
-
-const UserSwitcherButton = ({ user, active }: Props) => {
+}) => {
   const [isPending, setIsPending] = useState(false);
 
   const handleClick = async () => {

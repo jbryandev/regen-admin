@@ -1,9 +1,10 @@
 import { and } from "drizzle-orm";
 import { type z } from "zod";
 
-import AttendanceButton from "@/app/(app)/attendance/[meetingId]/attendance-button";
+import AttendanceButton from "@/app/(app)/groups/[groupSlug]/meetings/[meetingSlug]/attendance-button";
 import { db } from "@/server/db";
 import {
+  type groupSchema,
   type meetingSchema,
   type scheduleItemSchema,
 } from "@/server/db/schema/app";
@@ -13,14 +14,17 @@ type ScheduleItem = Pick<
   z.infer<typeof scheduleItemSchema>,
   "name" | "isCancelled"
 >;
-export type MeetingWithScheduleItem = Meeting & {
+type Group = Pick<z.infer<typeof groupSchema>, "slug">;
+
+export type MeetingWithScheduleItemAndGroupSlug = Meeting & {
   scheduleItem: ScheduleItem;
+  group: Group;
 };
 
 const Attendance = async ({
   meeting,
 }: {
-  meeting: MeetingWithScheduleItem;
+  meeting: MeetingWithScheduleItemAndGroupSlug;
 }) => {
   const participants = await db.query.participants.findMany({
     where: (participant, { eq }) => eq(participant.groupId, meeting.groupId),
@@ -36,13 +40,15 @@ const Attendance = async ({
   ) : (
     <div className="flex flex-col gap-3">
       {participants?.map(async (participant) => {
-        const present = await db.query.attendance.findFirst({
-          where: (attendance, { eq }) =>
-            and(
-              eq(attendance.participantId, participant.id),
-              eq(attendance.meetingId, meeting.id),
-            ),
-        });
+        const present = Boolean(
+          await db.query.attendance.findFirst({
+            where: (attendance, { eq }) =>
+              and(
+                eq(attendance.participantId, participant.id),
+                eq(attendance.meetingId, meeting.id),
+              ),
+          }),
+        );
 
         return (
           <AttendanceButton

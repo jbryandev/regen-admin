@@ -1,4 +1,3 @@
-import { eq } from "drizzle-orm";
 import { CircleUser } from "lucide-react";
 import { redirect } from "next/navigation";
 
@@ -19,7 +18,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import UserSwitcherButton from "@/components/user-switcher/user-switcher-button";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
-import { roles, users } from "@/server/db/schema/auth";
+import { users } from "@/server/db/schema/auth";
 
 const UserSwitcher = async () => {
   if (process.env.NODE_ENV === "production") return null;
@@ -68,24 +67,9 @@ const UserPanel = async () => {
       name: users.name,
       image: users.image,
       email: users.email,
-      role: roles.name,
+      role: users.role,
     })
-    .from(users)
-    .leftJoin(roles, eq(users.roleId, roles.id));
-
-  if (!logins || !session) {
-    return null;
-  }
-
-  // Map to sort logins by role
-  const loginSortMap = {
-    Administrator: 1,
-    Director: 2,
-    Coach: 3,
-    "Group Leader": 4,
-    Tech: 5,
-  };
-  logins.sort((x, y) => loginSortMap[x.role!] - loginSortMap[y.role!]);
+    .from(users);
 
   return (
     <div className="flex flex-col space-y-4 p-4">

@@ -54,7 +54,9 @@ export const participantsToStruggles = createTable(
 
 export const groups = createTable("group", {
   id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar("name", { length: 255 }),
+  slug: varchar("slug", { length: 50 }).unique().notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  gender: genderEnum("gender").notNull(),
 });
 
 export const usersToGroups = createTable("users_to_groups", {
@@ -67,6 +69,7 @@ export const usersToGroups = createTable("users_to_groups", {
 
 export const meetings = createTable("meeting", {
   id: uuid("id").defaultRandom().primaryKey(),
+  slug: varchar("slug", { length: 50 }).notNull(),
   groupId: uuid("group_id")
     .references(() => groups.id, {
       onDelete: "cascade",

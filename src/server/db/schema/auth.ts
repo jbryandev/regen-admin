@@ -1,6 +1,5 @@
 import { relations, sql } from "drizzle-orm";
 import {
-  boolean,
   index,
   integer,
   primaryKey,
@@ -14,8 +13,8 @@ import type { AdapterAccount } from "next-auth/adapters";
 import { z } from "zod";
 
 import { zPhone } from "@/lib/utils";
-import { createTable, genderEnum } from "@/server/db/schema";
-import { groups, usersToGroups } from "@/server/db/schema/app";
+import { createTable, genderEnum, roleEnum } from "@/server/db/schema";
+import { usersToGroups } from "@/server/db/schema/app";
 
 // Table definitions
 export const users = createTable("user", {
@@ -28,9 +27,7 @@ export const users = createTable("user", {
   image: varchar("image", { length: 255 }),
   phone: varchar("phone", { length: 15 }),
   gender: genderEnum("gender").notNull(),
-  roleId: uuid("role_id")
-    .notNull()
-    .references(() => roles.id),
+  role: roleEnum("role").notNull(),
 });
 
 export const accounts = createTable(
@@ -90,16 +87,8 @@ export const verificationTokens = createTable(
   }),
 );
 
-export const roles = createTable("role", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar("name", { length: 255 }).notNull(),
-  description: text("description"),
-  isAdmin: boolean("is_admin").default(false).notNull(),
-});
-
 // Relations
-export const usersRelations = relations(users, ({ one, many }) => ({
-  role: one(roles, { fields: [users.roleId], references: [roles.id] }),
+export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   groups: many(usersToGroups),
 }));
@@ -114,7 +103,7 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
 
 // Schema
 export const userSchema = createSelectSchema(users).extend({
-  name: z.optional(z.string()),
+  // name: z.optional(z.string()),
   email: z.string().email(),
   phone: z.optional(zPhone),
 });
@@ -129,5 +118,3 @@ export const userMenuSchema = userSchema.pick({
   name: true,
   image: true,
 });
-
-export const roleSchema = createSelectSchema(roles);

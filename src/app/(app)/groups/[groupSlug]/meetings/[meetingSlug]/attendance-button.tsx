@@ -1,14 +1,14 @@
 "use client";
 
-import { Circle, CircleCheck, Loader2 } from "lucide-react";
-import { useOptimistic, useTransition } from "react";
+import { Circle, CircleCheck } from "lucide-react";
+import { useOptimistic } from "react";
 import { type z } from "zod";
 
-import { type MeetingWithScheduleItem } from "@/app/(app)/attendance/[meetingId]/attendance";
+import { type MeetingWithScheduleItem } from "@/app/(app)/groups/[groupSlug]/meetings/[meetingSlug]/attendance";
 import {
   addAttendance,
   deleteAttendance,
-} from "@/app/(app)/attendance/[meetingId]/attendance-actions";
+} from "@/app/(app)/groups/[groupSlug]/meetings/[meetingSlug]/attendance-actions";
 import { Button } from "@/components/ui/button";
 import { type participantSchema } from "@/server/db/schema/app";
 
