@@ -1,4 +1,3 @@
-import dayjs from "dayjs";
 import { type z } from "zod";
 
 import { ColoredDot } from "@/components/colored-dot";
