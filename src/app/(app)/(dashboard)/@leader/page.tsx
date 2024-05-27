@@ -18,19 +18,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { fixedDate } from "@/lib/utils";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
 
 const LeaderDashboard = async () => {
   const session = await getServerAuthSession();
-  if (!session) {
-    redirect("/login");
-  }
 
   dayjs.extend(utc);
 
   const leader = await db.query.users.findFirst({
-    where: (user, { eq }) => eq(user.id, session.user.id),
+    where: (user, { eq }) => eq(user.id, session?.user.id ?? ""),
     with: {
       groups: {
         columns: {
@@ -62,13 +60,13 @@ const LeaderDashboard = async () => {
   );
 
   const recentMeetings = meetingsHeld
-    .filter((meeting) => new Date(meeting.date) < new Date())
+    .filter((meeting) => fixedDate(meeting.date) < new Date())
     .slice(-3)
     .map((meeting) => meeting.date);
 
   const currentWeek = meetings.find(
     (meeting) =>
-      new Date(meeting.date) > new Date(recentMeetings.slice(-1)[0] ?? ""),
+      fixedDate(meeting.date) > fixedDate(recentMeetings.slice(-1)[0] ?? ""),
   );
 
   const participants = await db.query.participants.findMany({
