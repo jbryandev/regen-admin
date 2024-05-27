@@ -2,7 +2,6 @@ import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 import AttendanceSummary from "@/app/(app)/(dashboard)/@leader/attendance-summary";
 import ChecklistCard from "@/app/(app)/(dashboard)/@leader/checklist-card";
@@ -60,14 +59,13 @@ const LeaderDashboard = async () => {
   );
 
   const recentMeetings = meetingsHeld
-    .filter((meeting) => fixedDate(meeting.date) < new Date())
+    .filter((meeting) => meeting.date < new Date().toISOString().split("T")[0]!)
     .slice(-3)
     .map((meeting) => meeting.date);
 
-  const currentWeek = meetings.find(
-    (meeting) =>
-      fixedDate(meeting.date) > fixedDate(recentMeetings.slice(-1)[0] ?? ""),
-  );
+  const currentWeek = meetings
+    .reverse()
+    .find((meeting) => meeting.date <= new Date().toISOString().split("T")[0]!);
 
   const participants = await db.query.participants.findMany({
     where: (participant, { eq }) => eq(participant.groupId, group?.id ?? ""),
