@@ -4,13 +4,24 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import ModeToggle from "@/components/mode-toggle";
-import { MobileNav, SidebarNav } from "@/components/navigation";
+import {
+  MobileNav,
+  type Navigation,
+  SidebarNav,
+  defaultNavigation,
+  leaderNavigation,
+} from "@/components/navigation";
 // import NotificationsMenu from "@/components/notifications-menu";
 // import { Input } from "@/components/ui/input";
 import UserMenu from "@/components/user-menu";
 import UserSwitcher from "@/components/user-switcher/user-switcher";
 import regen from "@/public/ReGen_Icon_Primary.png";
 import { getServerAuthSession } from "@/server/auth";
+
+type NavigationOptions = {
+  leader: Navigation;
+  admin: Navigation;
+};
 
 export const metadata = {
   title: "Regen Admin",
@@ -34,6 +45,11 @@ export default async function AppLayout({
     image: session.user.image ?? null,
   };
 
+  const navigation: NavigationOptions = {
+    leader: leaderNavigation,
+    admin: defaultNavigation,
+  };
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -45,13 +61,21 @@ export default async function AppLayout({
             </Link>
           </div>
           <div className="flex-1">
-            <SidebarNav />
+            <SidebarNav
+              navigation={
+                navigation[session.user.role as keyof NavigationOptions]
+              }
+            />
           </div>
         </div>
       </div>
       <div className="flex flex-col">
         <header className="flex h-14 items-center gap-3 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-          <MobileNav />
+          <MobileNav
+            navigation={
+              navigation[session.user.role as keyof NavigationOptions]
+            }
+          />
           <div className="w-full flex-1">
             {/* <form>
               <div className="relative">

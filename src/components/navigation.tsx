@@ -10,8 +10,10 @@ import {
   Star,
   HeartHandshake,
   Menu,
+  ListChecks,
   KeyRound,
   UserCheck,
+  type LucideIcon,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,26 +25,45 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import regen from "@/public/ReGen_Icon_Primary.png";
 
-export const navigation = [
+export type Navigation = {
+  title: string;
+  icon: LucideIcon;
+  path: string;
+}[];
+
+export const leaderNavigation: Navigation = [
   {
     title: "Dashboard",
     icon: Home,
     path: "/",
   },
   {
-    title: "Groups",
+    title: "Group",
     icon: Users,
     path: "/groups",
   },
+];
+
+export const defaultNavigation: Navigation = [
   {
-    title: "Attendance",
-    icon: UserCheck,
-    path: "/attendance",
+    title: "Dashboard",
+    icon: Home,
+    path: "/",
+  },
+  {
+    title: "Group",
+    icon: Users,
+    path: "/groups",
   },
   {
     title: "Training",
     icon: Video,
     path: "/training",
+  },
+  {
+    title: "Tasks",
+    icon: ListChecks,
+    path: "/tasks",
   },
   {
     title: "Communications",
@@ -76,7 +97,7 @@ export const navigation = [
   },
 ];
 
-export function SidebarNav() {
+export function SidebarNav({ navigation }: { navigation: Navigation }) {
   const pathname = "/" + usePathname().split("/")[1];
 
   return (
@@ -98,7 +119,7 @@ export function SidebarNav() {
   );
 }
 
-export function MobileNav() {
+export function MobileNav({ navigation }: { navigation: Navigation }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
