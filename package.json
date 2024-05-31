@@ -49,6 +49,7 @@
     "eslint-plugin-react-compiler": "0.0.0-experimental-c8b3f72-20240517",
     "libphonenumber-js": "^1.10.59",
     "lucide-react": "^0.363.0",
+    "nanoid": "^5.0.7",
     "next": "15.0.0-rc.0",
     "next-auth": "^4.24.7",
     "next-themes": "^0.3.0",

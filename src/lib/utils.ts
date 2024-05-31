@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import parsePhoneNumberFromString from "libphonenumber-js";
+import { customAlphabet } from "nanoid";
 import { twMerge } from "tailwind-merge";
 import { z } from "zod";
 
@@ -39,4 +40,10 @@ export function fixedDate(date: string) {
   const givenDate = new Date(date);
   const offset = givenDate.getTimezoneOffset() * 60 * 1000;
   return new Date(givenDate.getTime() + offset);
+}
+
+export function nanoid() {
+  const alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
+  const nanoid = customAlphabet(alphabet, 10);
+  return nanoid();
 }
