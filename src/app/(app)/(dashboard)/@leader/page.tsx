@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { fixedDate } from "@/lib/utils";
+import { nanoid } from "@/lib/utils";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
 
@@ -63,9 +63,9 @@ const LeaderDashboard = async () => {
     .slice(-3)
     .map((meeting) => meeting.date);
 
-  const currentWeek = meetings
-    .reverse()
-    .find((meeting) => meeting.date <= new Date().toISOString().split("T")[0]!);
+  const currentWeek = meetings.find(
+    (meeting) => meeting.date >= new Date().toISOString().split("T")[0]!,
+  );
 
   const participants = await db.query.participants.findMany({
     where: (participant, { eq }) => eq(participant.groupId, group?.id ?? ""),
