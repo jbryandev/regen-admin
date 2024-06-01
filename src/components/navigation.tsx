@@ -11,7 +11,6 @@ import {
   HeartHandshake,
   Menu,
   ListChecks,
-  KeyRound,
   UserCheck,
   type LucideIcon,
 } from "lucide-react";
@@ -25,11 +24,11 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import regen from "@/public/ReGen_Icon_Primary.png";
 
-export type Navigation = {
+export type Navigation = Array<{
   title: string;
   icon: LucideIcon;
   path: string;
-}[];
+}>;
 
 export const leaderNavigation: Navigation = [
   {
@@ -42,18 +41,10 @@ export const leaderNavigation: Navigation = [
     icon: Users,
     path: "/groups",
   },
-];
-
-export const defaultNavigation: Navigation = [
   {
-    title: "Dashboard",
-    icon: Home,
-    path: "/",
-  },
-  {
-    title: "Group",
-    icon: Users,
-    path: "/groups",
+    title: "Attendance",
+    icon: UserCheck,
+    path: "/attendance",
   },
   {
     title: "Training",
@@ -75,6 +66,19 @@ export const defaultNavigation: Navigation = [
     icon: CalendarDays,
     path: "/schedule",
   },
+];
+
+export const defaultNavigation: Navigation = [
+  {
+    title: "Dashboard",
+    icon: Home,
+    path: "/",
+  },
+  {
+    title: "Groups",
+    icon: Users,
+    path: "/groups",
+  },
   {
     title: "Leaders",
     icon: Star,
@@ -90,14 +94,9 @@ export const defaultNavigation: Navigation = [
     icon: Music,
     path: "/worship",
   },
-  {
-    title: "Roles",
-    icon: KeyRound,
-    path: "/roles",
-  },
 ];
 
-export function SidebarNav({ navigation }: { navigation: Navigation }) {
+export const SidebarNav = ({ navigation }: { navigation: Navigation }) => {
   const pathname = "/" + usePathname().split("/")[1];
 
   return (
@@ -117,7 +116,7 @@ export function SidebarNav({ navigation }: { navigation: Navigation }) {
       ))}
     </nav>
   );
-}
+};
 
 export function MobileNav({ navigation }: { navigation: Navigation }) {
   const pathname = usePathname();
