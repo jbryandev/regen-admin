@@ -1,10 +1,10 @@
 import parsePhoneNumberFromString from "libphonenumber-js";
 import Link from "next/link";
 
-import AttendanceSummary from "@/app/(app)/(dashboard)/@leader/attendance-summary";
 import ChecklistCard from "@/app/(app)/(dashboard)/@leader/checklist-card";
 import MemoryVerseCard from "@/app/(app)/(dashboard)/@leader/memory-verse-card";
 import ThisWeekCard from "@/app/(app)/(dashboard)/@leader/this-week-card";
+import AttendanceSummary from "@/components/attendance-summary";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -21,10 +21,10 @@ import {
   getRecentMeetings,
 } from "@/lib/utils";
 import { getServerAuthSession } from "@/server/auth";
-import { db } from "@/server/db";
 import {
   getLeaderGroup,
   getMeetingsForGroup,
+  getParticipantsWithAttendanceByGroup,
   getTasksForMeeting,
 } from "@/server/queries";
 
@@ -43,34 +43,9 @@ const LeaderDashboard = async () => {
 
   const tasks = await getTasksForMeeting(currentWeek?.scheduleItem.id ?? "");
 
-  const participants = await db.query.participants.findMany({
-    where: (participant, { eq }) => eq(participant.groupId, group?.id ?? ""),
-    columns: {
-      id: true,
-      firstName: true,
-      lastName: true,
-      email: true,
-      phone: true,
-    },
-    with: {
-      attendance: {
-        columns: { id: true },
-        with: {
-          meeting: {
-            columns: {
-              id: true,
-              date: true,
-              description: true,
-            },
-            with: {
-              scheduleItem: true,
-            },
-          },
-        },
-      },
-    },
-    orderBy: (participant, { asc }) => [asc(participant.lastName)],
-  });
+  const participants = await getParticipantsWithAttendanceByGroup(
+    group?.id ?? "",
+  );
 
   return (
     <>

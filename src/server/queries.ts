@@ -131,3 +131,78 @@ export const getTasksForMeeting = async (scheduleItemId: string) => {
 
   return tasks;
 };
+
+export const getParticipantsWithAttendanceByGroup = async (groupId: string) => {
+  const participants = await db.query.participants.findMany({
+    where: (participant, { eq }) => eq(participant.groupId, groupId),
+    columns: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      phone: true,
+    },
+    with: {
+      attendance: {
+        columns: { id: true },
+        with: {
+          meeting: {
+            columns: {
+              id: true,
+              date: true,
+              description: true,
+            },
+            with: {
+              scheduleItem: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: (participant, { asc }) => [asc(participant.lastName)],
+  });
+
+  return participants;
+};
+
+export const getParticipantDetailsByGroup = async (groupId: string) => {
+  const participants = await db.query.participants.findMany({
+    where: (participant, { eq }) => eq(participant.groupId, groupId),
+    columns: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      phone: true,
+    },
+    with: {
+      attendance: {
+        columns: { id: true },
+        with: {
+          meeting: {
+            columns: {
+              id: true,
+              date: true,
+              description: true,
+            },
+            with: {
+              scheduleItem: true,
+            },
+          },
+        },
+      },
+      mentor: true,
+    },
+    orderBy: (participant, { asc }) => [asc(participant.lastName)],
+  });
+
+  return participants;
+};
+
+export const getMemoryVerseByStep = async (step: number) => {
+  const verse = await db.query.verses.findFirst({
+    where: (verse, { eq }) => eq(verse.step, step),
+  });
+
+  return verse;
+};

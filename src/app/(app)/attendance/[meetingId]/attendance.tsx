@@ -1,5 +1,4 @@
 import { and } from "drizzle-orm";
-import { type z } from "zod";
 
 import AttendanceButton from "@/app/(app)/attendance/[meetingId]/attendance-button";
 import { type MeetingWithScheduleItem } from "@/lib/types";

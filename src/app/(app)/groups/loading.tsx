@@ -1,7 +1,7 @@
 import Loading from "@/components/loading";
 
-const AttendanceLoading = () => {
+const GroupLoading = () => {
   return <Loading />;
 };
 
-export default AttendanceLoading;
+export default GroupLoading;

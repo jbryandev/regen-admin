@@ -9,7 +9,7 @@ const GroupsPage = async () => {
   if (session?.user.role === "leader") {
     const group = await getLeaderGroup(session?.user.id);
 
-    redirect(`/groups/${group?.slug}`);
+    redirect(`/groups/${group?.id}`);
   }
 
   return (

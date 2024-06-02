@@ -7,12 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { db } from "@/server/db";
+import { getMemoryVerseByStep } from "@/server/queries";
 
 const MemoryVerseCard = async ({ step }: { step?: number }) => {
-  const verse = await db.query.verses.findFirst({
-    where: (verse, { eq }) => eq(verse.step, step ?? 0),
-  });
+  const verse = await getMemoryVerseByStep(step ?? 0);
 
   return (
     <Card className="order-3 flex flex-col justify-between sm:order-2">
