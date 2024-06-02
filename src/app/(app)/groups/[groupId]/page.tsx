@@ -17,12 +17,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { getCurrentMeeting, getRecentMeetings } from "@/lib/utils";
 import {
   getMeetingsForGroup,
@@ -84,7 +78,6 @@ const GroupsPage = async ({ params }: { params: { groupId: string } }) => {
                         recentMeetings={recentMeetings}
                       />
                     </TableCell>
-
                     <TableCell className="hidden sm:table-cell">
                       <Popover key={participant.mentor?.id}>
                         <PopoverTrigger asChild>
