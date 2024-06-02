@@ -18,22 +18,13 @@ import UserSwitcher from "@/components/user-switcher/user-switcher";
 import regen from "@/public/ReGen_Icon_Primary.png";
 import { getServerAuthSession } from "@/server/auth";
 
-type NavigationOptions = {
-  leader: Navigation;
-  admin: Navigation;
-};
-
 export const metadata = {
   title: "Regen Admin",
   description: "Administration site for Re:Generation",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default async function AppLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+const AppLayout = async ({ children }: { children: React.ReactNode }) => {
   // Require users to be logged in to access all parts of application
   const session = await getServerAuthSession();
   if (!session?.user) {
@@ -45,10 +36,15 @@ export default async function AppLayout({
     image: session.user.image ?? null,
   };
 
-  const navigation: NavigationOptions = {
-    leader: leaderNavigation,
-    admin: defaultNavigation,
-  };
+  const role = session.user.role;
+
+  let navigation: Navigation;
+
+  if (role === "leader") {
+    navigation = leaderNavigation;
+  } else {
+    navigation = defaultNavigation;
+  }
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -61,21 +57,13 @@ export default async function AppLayout({
             </Link>
           </div>
           <div className="flex-1">
-            <SidebarNav
-              navigation={
-                navigation[session.user.role as keyof NavigationOptions]
-              }
-            />
+            <SidebarNav navigation={navigation} />
           </div>
         </div>
       </div>
       <div className="flex flex-col">
         <header className="flex h-14 items-center gap-3 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-          <MobileNav
-            navigation={
-              navigation[session.user.role as keyof NavigationOptions]
-            }
-          />
+          <MobileNav navigation={navigation} />
           <div className="w-full flex-1">
             {/* <form>
               <div className="relative">
@@ -98,4 +86,6 @@ export default async function AppLayout({
       <UserSwitcher />
     </div>
   );
-}
+};
+
+export default AppLayout;

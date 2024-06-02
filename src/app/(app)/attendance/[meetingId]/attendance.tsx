@@ -1,30 +1,14 @@
 import { and } from "drizzle-orm";
 import { type z } from "zod";
 
-import AttendanceButton from "@/app/(app)/groups/[groupSlug]/meetings/[meetingSlug]/attendance-button";
+import AttendanceButton from "@/app/(app)/attendance/[meetingId]/attendance-button";
+import { type MeetingWithScheduleItem } from "@/lib/types";
 import { db } from "@/server/db";
-import {
-  type groupSchema,
-  type meetingSchema,
-  type scheduleItemSchema,
-} from "@/server/db/schema/app";
-
-type Meeting = z.infer<typeof meetingSchema>;
-type ScheduleItem = Pick<
-  z.infer<typeof scheduleItemSchema>,
-  "name" | "isCancelled"
->;
-type Group = Pick<z.infer<typeof groupSchema>, "slug">;
-
-export type MeetingWithScheduleItemAndGroupSlug = Meeting & {
-  scheduleItem: ScheduleItem;
-  group: Group;
-};
 
 const Attendance = async ({
   meeting,
 }: {
-  meeting: MeetingWithScheduleItemAndGroupSlug;
+  meeting: MeetingWithScheduleItem;
 }) => {
   const participants = await db.query.participants.findMany({
     where: (participant, { eq }) => eq(participant.groupId, meeting.groupId),

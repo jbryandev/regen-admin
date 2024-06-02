@@ -4,12 +4,12 @@ import { Circle, CircleCheck } from "lucide-react";
 import { useOptimistic } from "react";
 import { type z } from "zod";
 
-import { type MeetingWithScheduleItem } from "@/app/(app)/groups/[groupSlug]/meetings/[meetingSlug]/attendance";
 import {
   addAttendance,
   deleteAttendance,
-} from "@/app/(app)/groups/[groupSlug]/meetings/[meetingSlug]/attendance-actions";
+} from "@/app/(app)/attendance/[meetingId]/attendance-actions";
 import { Button } from "@/components/ui/button";
+import { type MeetingWithScheduleItem } from "@/lib/types";
 import { type participantSchema } from "@/server/db/schema/app";
 
 export type Participant = Pick<

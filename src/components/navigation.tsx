@@ -30,7 +30,7 @@ export type Navigation = Array<{
   path: string;
 }>;
 
-export const leaderNavigation: Navigation = [
+export const leaderNavigation = [
   {
     title: "Dashboard",
     icon: Home,
@@ -119,7 +119,7 @@ export const SidebarNav = ({ navigation }: { navigation: Navigation }) => {
 };
 
 export function MobileNav({ navigation }: { navigation: Navigation }) {
-  const pathname = usePathname();
+  const pathname = "/" + usePathname().split("/")[1];
   const [isOpen, setIsOpen] = useState(false);
 
   return (

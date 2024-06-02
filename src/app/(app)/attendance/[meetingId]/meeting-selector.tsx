@@ -2,7 +2,6 @@
 
 import { redirect, useParams } from "next/navigation";
 
-import { type MeetingWithScheduleItemAndGroupSlug } from "@/app/(app)/groups/[groupSlug]/meetings/[meetingSlug]/attendance";
 import {
   Select,
   SelectContent,
@@ -10,31 +9,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { type MeetingWithScheduleItem } from "@/lib/types";
 import { fixedDate } from "@/lib/utils";
 
 const MeetingSelector = ({
   meetings,
 }: {
-  meetings: MeetingWithScheduleItemAndGroupSlug[];
+  meetings: MeetingWithScheduleItem[];
 }) => {
   const params = useParams();
 
   const activeMeeting = meetings.find(
-    (meeting) => params.meetingSlug === meeting.slug,
+    (meeting) => params.meetingId === meeting.id,
   );
 
   const handleSelect = (value: string) => {
-    redirect(`/groups/${activeMeeting?.group.slug}/meetings/${value}`);
+    redirect(`/attendance/${value}`);
   };
 
   return (
-    <Select onValueChange={handleSelect} defaultValue={activeMeeting?.slug}>
+    <Select onValueChange={handleSelect} defaultValue={activeMeeting?.id}>
       <SelectTrigger className="max-w-64">
         <SelectValue placeholder="Select a meeting" />
       </SelectTrigger>
       <SelectContent>
         {meetings.map((meeting) => (
-          <SelectItem key={meeting.id} value={meeting.slug}>
+          <SelectItem key={meeting.id} value={meeting.id}>
             {fixedDate(meeting.date).toLocaleDateString()} (
             {meeting.scheduleItem.name})
           </SelectItem>

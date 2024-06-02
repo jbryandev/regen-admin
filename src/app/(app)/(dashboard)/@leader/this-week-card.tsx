@@ -1,6 +1,4 @@
-import dayjs from "dayjs";
 import { CalendarDays } from "lucide-react";
-import { type z } from "zod";
 
 import TrainingVideoPopup from "@/components/training-video-popup";
 import { Button } from "@/components/ui/button";
@@ -12,16 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  type meetingSchema,
-  type scheduleItemSchema,
-} from "@/server/db/schema/app";
-
-type Meeting = z.infer<typeof meetingSchema>;
-type ScheduleItem = z.infer<typeof scheduleItemSchema>;
-type MeetingWithScheduleItem = Meeting & {
-  scheduleItem: ScheduleItem;
-};
+import { type MeetingWithScheduleItem } from "@/lib/types";
 
 const ThisWeekCard = async ({
   currentWeek,

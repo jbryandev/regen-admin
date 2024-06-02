@@ -1,5 +1,3 @@
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 import parsePhoneNumberFromString from "libphonenumber-js";
 import Link from "next/link";
 
@@ -17,55 +15,33 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { nanoid } from "@/lib/utils";
+import {
+  filterOutCancelledMeetings,
+  getCurrentMeeting,
+  getRecentMeetings,
+} from "@/lib/utils";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
+import {
+  getLeaderGroup,
+  getMeetingsForGroup,
+  getTasksForMeeting,
+} from "@/server/queries";
 
 const LeaderDashboard = async () => {
   const session = await getServerAuthSession();
 
-  dayjs.extend(utc);
+  const group = await getLeaderGroup(session?.user.id ?? "");
 
-  const leader = await db.query.users.findFirst({
-    where: (user, { eq }) => eq(user.id, session?.user.id ?? ""),
-    with: {
-      groups: {
-        columns: {
-          groupId: true,
-        },
-        limit: 1,
-      },
-    },
-  });
+  const meetings = await getMeetingsForGroup(group?.id ?? "");
 
-  const group = await db.query.groups.findFirst({
-    where: (group, { eq }) => eq(group.id, leader?.groups[0]?.groupId ?? ""),
-  });
+  const meetingsHeld = filterOutCancelledMeetings(meetings);
 
-  const meetings = await db.query.meetings.findMany({
-    where: (meeting, { eq }) => eq(meeting.groupId, group?.id ?? ""),
-    orderBy: (meeting, { asc }) => [asc(meeting.date)],
-    with: {
-      scheduleItem: {
-        with: {
-          tasks: true,
-        },
-      },
-    },
-  });
+  const recentMeetings = getRecentMeetings(meetingsHeld);
 
-  const meetingsHeld = meetings.filter(
-    (meeting) => !meeting.scheduleItem.isCancelled === true,
-  );
+  const currentWeek = getCurrentMeeting(meetings);
 
-  const recentMeetings = meetingsHeld
-    .filter((meeting) => meeting.date < new Date().toISOString().split("T")[0]!)
-    .slice(-3)
-    .map((meeting) => meeting.date);
-
-  const currentWeek = meetings.find(
-    (meeting) => meeting.date >= new Date().toISOString().split("T")[0]!,
-  );
+  const tasks = await getTasksForMeeting(currentWeek?.scheduleItem.id ?? "");
 
   const participants = await db.query.participants.findMany({
     where: (participant, { eq }) => eq(participant.groupId, group?.id ?? ""),
@@ -100,7 +76,7 @@ const LeaderDashboard = async () => {
     <>
       <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 md:gap-8 xl:grid-cols-4">
         <ThisWeekCard currentWeek={currentWeek} />
-        <ChecklistCard tasks={currentWeek?.scheduleItem.tasks} />
+        <ChecklistCard tasks={tasks} />
         <MemoryVerseCard step={currentWeek?.scheduleItem.step ?? 0} />
       </div>
       <Card>
@@ -109,13 +85,13 @@ const LeaderDashboard = async () => {
             <CardTitle className="text-xl">Group Summary</CardTitle>
             <div className="flex gap-2 sm:justify-end">
               <Link
-                href={`/groups/${group?.slug}/meetings/${currentWeek?.slug}`}
+                href={`/attendance/${currentWeek?.id}`}
                 className={buttonVariants({ variant: "secondary" })}
               >
                 Take Attendance
               </Link>
               <Link
-                href={`/groups/${group?.slug}`}
+                href={`/groups/${group?.id}`}
                 className={buttonVariants({ variant: "default" })}
               >
                 Group Details

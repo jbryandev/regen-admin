@@ -1,8 +1,9 @@
 import { type ClassValue, clsx } from "clsx";
 import parsePhoneNumberFromString from "libphonenumber-js";
-import { customAlphabet } from "nanoid";
 import { twMerge } from "tailwind-merge";
 import { z } from "zod";
+
+import { type MeetingWithScheduleItem } from "@/lib/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -42,8 +43,39 @@ export function fixedDate(date: string) {
   return new Date(givenDate.getTime() + offset);
 }
 
-export function nanoid() {
-  const alphabet = "0123456789abcdefghijklmnopqrstuvwxyz";
-  const nanoid = customAlphabet(alphabet, 10);
-  return nanoid();
-}
+export const getOneWeekAheadDate = (date: Date) => {
+  const oneWeekAhead = new Date(date);
+  oneWeekAhead.setDate(oneWeekAhead.getDate() + 7);
+  return oneWeekAhead;
+};
+
+export const getOneDayBehindDate = (date: Date) => {
+  const oneDayBehind = new Date(date);
+  oneDayBehind.setDate(oneDayBehind.getDate() - 1);
+  return oneDayBehind;
+};
+
+export const filterOutCancelledMeetings = (
+  meetings: MeetingWithScheduleItem[],
+) => {
+  return meetings.filter((meeting) => !meeting.scheduleItem.isCancelled);
+};
+
+export const getRecentMeetings = (meetings: MeetingWithScheduleItem[]) => {
+  return meetings
+    .filter(
+      (meeting) =>
+        meeting.date <
+        fixedDate(new Date().toISOString()).toISOString().split("T")[0]!,
+    )
+    .slice(-3)
+    .map((meeting) => meeting.date);
+};
+
+export const getCurrentMeeting = (meetings: MeetingWithScheduleItem[]) => {
+  return meetings.find(
+    (meeting) =>
+      meeting.date >=
+      getOneDayBehindDate(new Date()).toISOString().split("T")[0]!,
+  );
+};
