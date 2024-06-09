@@ -76,6 +76,39 @@ export const getCoachGroups = async (coachId: string) => {
   return coachGroups;
 };
 
+export const getGroupLeadership = async (groupId: string) => {
+  const leadership = await db.query.usersToGroups.findMany({
+    where: (group, { eq }) => eq(group.groupId, groupId),
+    columns: {
+      userId: true,
+    },
+    with: {
+      user: {
+        columns: {
+          id: true,
+          name: true,
+          image: true,
+          email: true,
+          phone: true,
+          role: true,
+        },
+      },
+    },
+  });
+
+  if (leadership.length === 0) throw new Error("No leaders found");
+
+  const leaders = leadership
+    .filter((leader) => leader?.user?.role === "leader")
+    .map((leader) => leader.user);
+
+  const coaches = leadership
+    .filter((coach) => coach?.user?.role != "leader")
+    .map((coach) => coach.user);
+
+  return { leaders, coaches };
+};
+
 export const getMeetingById = async (meetingId: string) => {
   const meeting = await db.query.meetings.findFirst({
     where: (meeting, { eq }) => eq(meeting.id, meetingId),

@@ -5,6 +5,7 @@ import {
   type meetingSchema,
   type taskSchema,
 } from "@/server/db/schema/app";
+import { type userSchema } from "@/server/db/schema/auth";
 
 export type Participant = {
   id: string;
@@ -31,3 +32,8 @@ export type MeetingWithScheduleItemAndTasks = Meeting & {
     tasks: Task[];
   };
 };
+
+export type GroupLeadershipCardProps = Pick<
+  z.infer<typeof userSchema>,
+  "id" | "name" | "image" | "email" | "phone" | "role"
+> | null;

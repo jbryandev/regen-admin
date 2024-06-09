@@ -15,7 +15,7 @@ const AttendancePage = async ({
   );
 
   return (
-    <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+    <>
       <div className="flex items-center justify-between border-b pb-4">
         <div>
           <h1 className="text-xl font-semibold md:text-2xl">
@@ -30,7 +30,7 @@ const AttendancePage = async ({
         <MeetingSelector meetings={meetings} />
       </div>
       {currentMeeting && <Attendance meeting={currentMeeting} />}
-    </main>
+    </>
   );
 };
 

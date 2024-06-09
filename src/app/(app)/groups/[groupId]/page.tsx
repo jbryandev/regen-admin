@@ -1,9 +1,19 @@
 import parsePhoneNumberFromString from "libphonenumber-js";
+import { CalendarDays, ChevronDown } from "lucide-react";
 import Link from "next/link";
 
+import CoachCard from "@/app/(app)/groups/[groupId]/coach-card";
+import LeaderCard from "@/app/(app)/groups/[groupId]/leader-card";
 import AttendanceSummary from "@/components/attendance-summary";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Popover,
   PopoverContent,
@@ -19,6 +29,7 @@ import {
 } from "@/components/ui/table";
 import { getCurrentMeeting, getRecentMeetings } from "@/lib/utils";
 import {
+  getGroupLeadership,
   getMeetingsForGroup,
   getParticipantDetailsByGroup,
 } from "@/server/queries";
@@ -27,22 +38,45 @@ const GroupsPage = async ({ params }: { params: { groupId: string } }) => {
   const meetings = await getMeetingsForGroup(params.groupId);
   const recentMeetings = getRecentMeetings(meetings);
   const currentMeeting = getCurrentMeeting(meetings);
+  const { leaders, coaches } = await getGroupLeadership(params.groupId);
   const participants = await getParticipantDetailsByGroup(params.groupId);
 
   return (
-    <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+    <>
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-semibold md:text-2xl">Group Details</h1>
-        <Link
-          href={`/attendance/${currentMeeting?.id}`}
-          className={buttonVariants({ variant: "secondary" })}
-        >
-          Take Attendance
-        </Link>
+      </div>
+      <div className="grid gap-4 md:gap-8 xl:grid-cols-3">
+        <Card className="flex flex-col justify-between">
+          <CardHeader className="flex-none">
+            <CardDescription className="flex flex-row items-center justify-between space-y-0">
+              Current Step
+              <CalendarDays className="h-4 w-4 text-muted-foreground" />
+            </CardDescription>
+            <CardTitle className="text-xl">
+              {currentMeeting?.scheduleItem.name ?? "Nothing of note"}
+            </CardTitle>
+          </CardHeader>
+          <CardFooter className="flex-none gap-2">
+            <Button variant={"secondary"} className="w-full">
+              Group Schedule
+            </Button>
+          </CardFooter>
+        </Card>
+        <LeaderCard leaders={leaders} />
+        <CoachCard coaches={coaches} />
       </div>
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">Roster</CardTitle>
+          <div className="flex items-center justify-between gap-4">
+            <CardTitle className="text-xl">Roster</CardTitle>
+            <Link
+              href={`/attendance/${currentMeeting?.id}`}
+              className={buttonVariants({ variant: "secondary" })}
+            >
+              Take Attendance
+            </Link>
+          </div>
         </CardHeader>
         <CardContent>
           <Table>
@@ -53,7 +87,9 @@ const GroupsPage = async ({ params }: { params: { groupId: string } }) => {
                 <TableHead className="hidden xl:table-cell">Email</TableHead>
                 <TableHead className="hidden lg:table-cell">Phone</TableHead>
                 <TableHead>Form</TableHead>
-                <TableHead className="hidden sm:table-cell">Mentor</TableHead>
+                <TableHead className="hidden text-center sm:table-cell">
+                  Mentor
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -78,40 +114,48 @@ const GroupsPage = async ({ params }: { params: { groupId: string } }) => {
                         recentMeetings={recentMeetings}
                       />
                     </TableCell>
-                    <TableCell className="hidden sm:table-cell">
-                      <Popover key={participant.mentor?.id}>
-                        <PopoverTrigger asChild>
-                          <Button variant="ghost">
-                            {participant.mentor?.firstName}{" "}
-                            {participant.mentor?.lastName}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent>
-                          <div className="grid gap-4">
-                            <div className="space-y-2">
-                              <h4 className="font-medium leading-none">
-                                Mentor Information
-                              </h4>
+                    <TableCell align="right" className="hidden sm:table-cell">
+                      {participant.mentor && (
+                        <Popover key={participant.mentor?.id}>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              className="flex items-center justify-end gap-2"
+                            >
                               <div>
-                                <p className="text-sm text-muted-foreground">
-                                  {participant.mentor?.firstName}{" "}
-                                  {participant.mentor?.lastName}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  {participant.mentor?.phone &&
-                                    parsePhoneNumberFromString(
-                                      participant.mentor?.phone,
-                                      "US",
-                                    )?.formatNational()}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  {participant.mentor?.email}
-                                </p>
+                                {participant.mentor?.firstName}{" "}
+                                {participant.mentor?.lastName}
+                              </div>
+                              <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent>
+                            <div className="grid gap-4">
+                              <div className="space-y-2">
+                                <h4 className="font-medium leading-none">
+                                  Mentor Information
+                                </h4>
+                                <div>
+                                  <p className="text-sm text-muted-foreground">
+                                    {participant.mentor?.firstName}{" "}
+                                    {participant.mentor?.lastName}
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {participant.mentor?.email}
+                                  </p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {participant.mentor?.phone &&
+                                      parsePhoneNumberFromString(
+                                        participant.mentor?.phone,
+                                        "US",
+                                      )?.formatNational()}
+                                  </p>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </PopoverContent>
-                      </Popover>
+                          </PopoverContent>
+                        </Popover>
+                      )}
                     </TableCell>
                   </TableRow>
                 );
@@ -120,7 +164,7 @@ const GroupsPage = async ({ params }: { params: { groupId: string } }) => {
           </Table>
         </CardContent>
       </Card>
-    </main>
+    </>
   );
 };
 
