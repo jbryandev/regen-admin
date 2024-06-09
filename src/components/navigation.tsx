@@ -2,6 +2,7 @@
 
 import {
   Home,
+  User,
   Users,
   Video,
   Mail,
@@ -13,6 +14,7 @@ import {
   ListChecks,
   UserCheck,
   type LucideIcon,
+  Award,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -80,9 +82,19 @@ export const defaultNavigation: Navigation = [
     path: "/groups",
   },
   {
+    title: "Participants",
+    icon: User,
+    path: "/participants",
+  },
+  {
     title: "Leaders",
     icon: Star,
     path: "/leaders",
+  },
+  {
+    title: "Coaches",
+    icon: Award,
+    path: "/coaches",
   },
   {
     title: "Mentors",

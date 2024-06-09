@@ -43,6 +43,14 @@ export function fixedDate(date: string) {
   return new Date(givenDate.getTime() + offset);
 }
 
+export function shortDate(date: string) {
+  // Split the input date string by hyphens
+  const [year, month, day] = date.split("-");
+
+  // Return the date in MM/DD/YYYY format
+  return `${month}/${day}/${year}`;
+}
+
 export const getOneWeekAheadDate = (date: Date) => {
   const oneWeekAhead = new Date(date);
   oneWeekAhead.setDate(oneWeekAhead.getDate() + 7);

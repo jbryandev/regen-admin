@@ -7,6 +7,11 @@ import { type userProfileSchema, users } from "@/server/db/schema/auth";
 
 import "server-only";
 
+/**
+ *
+ * Users
+ *
+ */
 type UserProfile = z.infer<typeof userProfileSchema>;
 
 export const getUserProfile = async () => {
@@ -34,6 +39,57 @@ export const updateUserProfile = async (data: UserProfile) => {
       phone: data.phone,
     })
     .where(eq(users.id, session.user.id));
+};
+
+export const getLeaders = async () => {
+  const leaders = await db.select().from(users).where(eq(users.role, "leader"));
+  return leaders;
+};
+
+export const getCoaches = async () => {
+  const staff = await db.query.usersToGroups.findMany({
+    with: {
+      user: {
+        columns: {
+          id: true,
+          name: true,
+          role: true,
+        },
+      },
+    },
+  });
+  const coaches = staff.filter((staff) => staff?.user?.role != "leader");
+  const uniqueCoaches = [...new Set(coaches.map((coach) => coach?.user?.id))];
+  return uniqueCoaches;
+};
+
+/**
+ *
+ * Groups
+ *
+ */
+export const getGroups = async () => {
+  const groups = await db.query.groups.findMany();
+  return groups;
+};
+
+export const getGroupsWithDetails = async () => {
+  const groups = await db.query.groups.findMany({
+    with: {
+      meetings: {
+        with: {
+          scheduleItem: true,
+        },
+      },
+      participants: true,
+      users: {
+        with: {
+          user: true,
+        },
+      },
+    },
+  });
+  return groups;
 };
 
 export const getLeaderGroup = async (leaderId: string) => {
@@ -109,6 +165,19 @@ export const getGroupLeadership = async (groupId: string) => {
   return { leaders, coaches };
 };
 
+export const getMemoryVerseByStep = async (step: number) => {
+  const verse = await db.query.verses.findFirst({
+    where: (verse, { eq }) => eq(verse.step, step),
+  });
+
+  return verse;
+};
+
+/**
+ *
+ * Meetings
+ *
+ */
 export const getMeetingById = async (meetingId: string) => {
   const meeting = await db.query.meetings.findFirst({
     where: (meeting, { eq }) => eq(meeting.id, meetingId),
@@ -163,6 +232,22 @@ export const getTasksForMeeting = async (scheduleItemId: string) => {
   });
 
   return tasks;
+};
+
+/**
+ *
+ * Participants
+ *
+ */
+export const getParticipants = async () => {
+  const participants = await db.query.participants.findMany();
+  return participants;
+};
+
+export const getMentors = async () => {
+  const mentors = await db.query.mentors.findMany();
+  const uniqueMentors = [...new Set(mentors.map((mentor) => mentor?.id))];
+  return uniqueMentors;
 };
 
 export const getParticipantsWithAttendanceByGroup = async (groupId: string) => {
@@ -230,12 +315,4 @@ export const getParticipantDetailsByGroup = async (groupId: string) => {
   });
 
   return participants;
-};
-
-export const getMemoryVerseByStep = async (step: number) => {
-  const verse = await db.query.verses.findFirst({
-    where: (verse, { eq }) => eq(verse.step, step),
-  });
-
-  return verse;
 };
