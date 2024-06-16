@@ -14,6 +14,18 @@ export function formatPhone(phone: string) {
   return formattedPhone;
 }
 
+export function prettyPhone(phone: string) {
+  const formattedPhone = parsePhoneNumberFromString(phone, {
+    // set this to use a default country when the phone number omits country code
+    defaultCountry: "US",
+
+    // set to false to require that the whole string is exactly a phone number,
+    // otherwise, it will search for a phone number anywhere within the string
+    extract: false,
+  })?.formatNational();
+  return formattedPhone;
+}
+
 export const zPhone = z.string().transform((arg, ctx) => {
   const phone = parsePhoneNumberFromString(arg, {
     // set this to use a default country when the phone number omits country code

@@ -244,6 +244,35 @@ export const getParticipants = async () => {
   return participants;
 };
 
+export const getParticipantsWithGroup = async () => {
+  const participants = await db.query.participants.findMany({
+    with: {
+      group: true,
+    },
+  });
+  return participants;
+};
+
+export const getMaleParticipantsWithGroup = async () => {
+  const participants = await db.query.participants.findMany({
+    where: (participant, { eq }) => eq(participant.gender, "male"),
+    with: {
+      group: true,
+    },
+  });
+  return participants;
+};
+
+export const getFemaleParticipantsWithGroup = async () => {
+  const participants = await db.query.participants.findMany({
+    where: (participant, { eq }) => eq(participant.gender, "female"),
+    with: {
+      group: true,
+    },
+  });
+  return participants;
+};
+
 export const getMentors = async () => {
   const mentors = await db.query.mentors.findMany();
   const uniqueMentors = [...new Set(mentors.map((mentor) => mentor?.id))];
