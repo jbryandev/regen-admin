@@ -17,14 +17,14 @@ const CoachCard = ({ coaches }: { coaches: GroupLeadershipCardProps[] }) => {
     <Card className="flex flex-col @container">
       <CardHeader className="flex-none">
         <CardDescription className="flex flex-row items-center justify-between space-y-0">
-          Group Coach
+          Coach
           <HeartHandshake className="h-4 w-4 text-muted-foreground" />
         </CardDescription>
       </CardHeader>
       <CardContent className="overflow-hidden">
         <div className="flex flex-col gap-4 @md:flex-row">
           {coaches.map((coach) => (
-            <div key={coach.id} className="flex items-center gap-4 text-sm">
+            <div key={coach?.id} className="flex items-center gap-4 text-sm">
               <div
                 className={cn(
                   buttonVariants({

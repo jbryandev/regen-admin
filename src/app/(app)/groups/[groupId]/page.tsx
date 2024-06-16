@@ -27,7 +27,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getCurrentMeeting, getRecentMeetings } from "@/lib/utils";
+import { cn, getCurrentMeeting, getRecentMeetings } from "@/lib/utils";
 import {
   getGroupLeadership,
   getMeetingsForGroup,
@@ -47,6 +47,8 @@ const GroupsPage = async ({ params }: { params: { groupId: string } }) => {
         <h1 className="text-lg font-semibold md:text-2xl">Group Details</h1>
       </div>
       <div className="grid gap-4 md:gap-8 xl:grid-cols-3">
+        <LeaderCard leaders={leaders} />
+        <CoachCard coaches={coaches} />
         <Card className="flex flex-col justify-between">
           <CardHeader className="flex-none">
             <CardDescription className="flex flex-row items-center justify-between space-y-0">
@@ -58,13 +60,14 @@ const GroupsPage = async ({ params }: { params: { groupId: string } }) => {
             </CardTitle>
           </CardHeader>
           <CardFooter className="flex-none gap-2">
-            <Button variant={"secondary"} className="w-full">
+            <Link
+              href={`/schedule/${params.groupId}`}
+              className={cn(buttonVariants({ variant: "default" }), "w-full")}
+            >
               Group Schedule
-            </Button>
+            </Link>
           </CardFooter>
         </Card>
-        <LeaderCard leaders={leaders} />
-        <CoachCard coaches={coaches} />
       </div>
       <Card>
         <CardHeader>
@@ -72,7 +75,7 @@ const GroupsPage = async ({ params }: { params: { groupId: string } }) => {
             <CardTitle className="text-xl">Roster</CardTitle>
             <Link
               href={`/attendance/${currentMeeting?.id}`}
-              className={buttonVariants({ variant: "secondary" })}
+              className={buttonVariants({ variant: "default" })}
             >
               Take Attendance
             </Link>

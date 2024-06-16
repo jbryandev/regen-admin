@@ -17,7 +17,7 @@ const LeaderCard = ({ leaders }: { leaders: GroupLeadershipCardProps[] }) => {
     <Card className="flex flex-col @container">
       <CardHeader className="flex-none">
         <CardDescription className="flex flex-row items-center justify-between space-y-0">
-          Group Leaders
+          Leaders
           <Star className="h-4 w-4 text-muted-foreground" />
         </CardDescription>
       </CardHeader>
