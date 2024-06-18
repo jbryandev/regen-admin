@@ -26,7 +26,7 @@ const CoachesPage = async () => {
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold md:text-2xl">Leaders</h1>
+        <h1 className="text-lg font-semibold md:text-2xl">Coaches</h1>
       </div>
       <Table>
         <TableHeader>
