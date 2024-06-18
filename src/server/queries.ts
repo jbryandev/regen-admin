@@ -46,6 +46,38 @@ export const getLeaders = async () => {
   return leaders;
 };
 
+export const getLeadersWithGroup = async () => {
+  const leaders = await db.query.users.findMany({
+    where: (user, { eq }) => eq(user.role, "leader"),
+    columns: {
+      id: true,
+      name: true,
+      gender: true,
+      email: true,
+      phone: true,
+    },
+    with: {
+      groups: true,
+    },
+  });
+
+  const groups = await db.query.groups.findMany({
+    columns: {
+      id: true,
+      name: true,
+    },
+  });
+
+  const leadersWithGroup = leaders.map((leader) => {
+    const group = groups.find(
+      (group) => group.id === leader.groups[0]?.groupId ?? "",
+    );
+    return { ...leader, group };
+  });
+
+  return leadersWithGroup;
+};
+
 export const getCoaches = async () => {
   const staff = await db.query.usersToGroups.findMany({
     with: {
