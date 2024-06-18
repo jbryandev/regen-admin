@@ -95,6 +95,38 @@ export const getCoaches = async () => {
   return uniqueCoaches;
 };
 
+export const getCoachesWithGroups = async () => {
+  const coaches = await db.query.users.findMany({
+    where: (user, { eq }) => eq(user.role, "coach"),
+    columns: {
+      id: true,
+      name: true,
+      gender: true,
+      email: true,
+      phone: true,
+    },
+    with: {
+      groups: true,
+    },
+  });
+
+  const groups = await db.query.groups.findMany({
+    columns: {
+      id: true,
+      name: true,
+    },
+  });
+
+  const coachesWithGroups = coaches.map((coach) => {
+    const coachGroups = coach.groups.map((group) =>
+      groups.find((g) => g.id === group.groupId),
+    );
+    return { ...coach, groups: coachGroups };
+  });
+
+  return coachesWithGroups;
+};
+
 /**
  *
  * Groups
