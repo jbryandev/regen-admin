@@ -3,7 +3,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { buttonVariants } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -50,14 +49,24 @@ const GroupsPage = async () => {
             <TableHead className="hidden text-center xl:table-cell">
               Current Step
             </TableHead>
-            <TableHead className="text-center">Details</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {groups.map((group) => {
             return (
               <TableRow key={group.id}>
-                <TableCell>{group.name}</TableCell>
+                <TableCell>
+                  <Link
+                    href={`/groups/${group.id}`}
+                    className={cn(
+                      buttonVariants({ variant: "ghost" }),
+                      "items-center gap-2",
+                    )}
+                  >
+                    {group.name}
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  </Link>
+                </TableCell>
                 <TableCell align="center">
                   {group.gender === "male" ? "M" : "F"}
                 </TableCell>
@@ -78,18 +87,6 @@ const GroupsPage = async () => {
                 </TableCell>
                 <TableCell align="center" className="hidden xl:table-cell">
                   {getCurrentMeeting(group.meetings)?.scheduleItem.name}
-                </TableCell>
-                <TableCell align="center">
-                  <Link
-                    href={`/groups/${group.id}`}
-                    className={cn(
-                      buttonVariants({ variant: "ghost" }),
-                      "items-center gap-2",
-                    )}
-                  >
-                    Group Details
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </Link>
                 </TableCell>
               </TableRow>
             );

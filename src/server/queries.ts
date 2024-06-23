@@ -339,7 +339,7 @@ export const getFemaleParticipantsWithGroup = async () => {
 
 export const getMentors = async () => {
   const mentors = await db.query.mentors.findMany();
-  const uniqueMentors = [...new Set(mentors.map((mentor) => mentor?.id))];
+  const uniqueMentors = [...new Set(mentors.map((mentor) => mentor))];
   return uniqueMentors;
 };
 

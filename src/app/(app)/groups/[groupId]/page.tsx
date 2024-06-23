@@ -1,5 +1,5 @@
 import parsePhoneNumberFromString from "libphonenumber-js";
-import { CalendarDays, ChevronDown } from "lucide-react";
+import { CalendarDays, ChevronDown, Mail, Phone } from "lucide-react";
 import Link from "next/link";
 
 import CoachCard from "@/app/(app)/groups/[groupId]/coach-card";
@@ -133,28 +133,23 @@ const GroupsPage = async ({ params }: { params: { groupId: string } }) => {
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent>
-                            <div className="grid gap-4">
-                              <div className="space-y-2">
-                                <h4 className="font-medium leading-none">
-                                  Mentor Information
-                                </h4>
-                                <div>
-                                  <p className="text-sm text-muted-foreground">
-                                    {participant.mentor?.firstName}{" "}
-                                    {participant.mentor?.lastName}
-                                  </p>
-                                  <p className="text-sm text-muted-foreground">
-                                    {participant.mentor?.email}
-                                  </p>
-                                  <p className="text-sm text-muted-foreground">
-                                    {participant.mentor?.phone &&
-                                      parsePhoneNumberFromString(
-                                        participant.mentor?.phone,
-                                        "US",
-                                      )?.formatNational()}
-                                  </p>
+                            <div className="flex flex-col gap-1">
+                              {participant.mentor?.email && (
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                  <Mail className="h-4 w-4" />
+                                  {participant.mentor?.email}
                                 </div>
-                              </div>
+                              )}
+                              {participant.mentor?.phone && (
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                  <Phone className="h-4 w-4" />
+                                  {participant.mentor?.phone &&
+                                    parsePhoneNumberFromString(
+                                      participant.mentor?.phone,
+                                      "US",
+                                    )?.formatNational()}
+                                </div>
+                              )}
                             </div>
                           </PopoverContent>
                         </Popover>

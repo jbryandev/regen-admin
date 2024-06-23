@@ -22,7 +22,7 @@ const LeaderCard = ({ leaders }: { leaders: GroupLeadershipCardProps[] }) => {
         </CardDescription>
       </CardHeader>
       <CardContent className="overflow-hidden">
-        <div className="flex flex-col gap-4 @md:flex-row">
+        <div className="flex flex-col gap-6 @md:flex-row">
           {leaders.map((leader) => (
             <div key={leader.id} className="flex items-center gap-4 text-sm">
               <div
