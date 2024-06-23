@@ -46,7 +46,7 @@ const CoachesPage = async () => {
               <TableRow key={coach.id}>
                 <TableCell>{coach.name}</TableCell>
                 <TableCell align="center" className="hidden lg:table-cell">
-                  {coach.gender === "male" ? "M" : "F"}
+                  {coach.gender === "male" ? "Male" : "Female"}
                 </TableCell>
                 <TableCell className="hidden xl:table-cell">
                   {prettyPhone(coach.phone ?? "")}

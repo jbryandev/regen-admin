@@ -48,7 +48,7 @@ const LeadersPage = async () => {
               <TableRow key={leader.id}>
                 <TableCell>{leader.name}</TableCell>
                 <TableCell align="center" className="hidden lg:table-cell">
-                  {leader.gender === "male" ? "M" : "F"}
+                  {leader.gender === "male" ? "Male" : "Female"}
                 </TableCell>
                 <TableCell className="hidden xl:table-cell">
                   {prettyPhone(leader.phone ?? "")}

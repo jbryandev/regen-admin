@@ -34,6 +34,7 @@ const MentorsPage = async () => {
             <TableHead>Last Name</TableHead>
             <TableHead className="hidden xl:table-cell">Phone</TableHead>
             <TableHead className="hidden xl:table-cell">Email</TableHead>
+            <TableHead>Mentee(s)</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -47,6 +48,13 @@ const MentorsPage = async () => {
                 </TableCell>
                 <TableCell className="hidden xl:table-cell">
                   {mentor.email}
+                </TableCell>
+                <TableCell>
+                  {mentor.participants.map((mentee) => (
+                    <div key={mentee.id}>
+                      {mentee.firstName} {mentee.lastName}
+                    </div>
+                  ))}
                 </TableCell>
               </TableRow>
             );

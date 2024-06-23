@@ -90,7 +90,7 @@ const GroupsPage = async ({ params }: { params: { groupId: string } }) => {
                 <TableHead className="hidden xl:table-cell">Email</TableHead>
                 <TableHead className="hidden lg:table-cell">Phone</TableHead>
                 <TableHead>Form</TableHead>
-                <TableHead className="hidden text-right sm:table-cell">
+                <TableHead className="hidden text-center sm:table-cell">
                   Mentor
                 </TableHead>
               </TableRow>
@@ -117,7 +117,7 @@ const GroupsPage = async ({ params }: { params: { groupId: string } }) => {
                         recentMeetings={recentMeetings}
                       />
                     </TableCell>
-                    <TableCell align="right" className="hidden sm:table-cell">
+                    <TableCell align="center" className="hidden sm:table-cell">
                       {participant.mentor && (
                         <Popover key={participant.mentor?.id}>
                           <PopoverTrigger asChild>

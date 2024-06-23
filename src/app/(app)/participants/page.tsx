@@ -50,7 +50,7 @@ const ParticipantsPage = async () => {
                 <TableCell>{participant.firstName}</TableCell>
                 <TableCell>{participant.lastName}</TableCell>
                 <TableCell align="center" className="hidden lg:table-cell">
-                  {participant.gender === "male" ? "M" : "F"}
+                  {participant.gender === "male" ? "Male" : "Female"}
                 </TableCell>
                 <TableCell className="hidden xl:table-cell">
                   {prettyPhone(participant.phone ?? "")}

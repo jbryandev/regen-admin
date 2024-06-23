@@ -59,6 +59,7 @@ export const getLeadersWithGroup = async () => {
     with: {
       groups: true,
     },
+    orderBy: (leader, { asc }) => [asc(leader.name)],
   });
 
   const groups = await db.query.groups.findMany({
@@ -79,20 +80,29 @@ export const getLeadersWithGroup = async () => {
 };
 
 export const getCoaches = async () => {
-  const staff = await db.query.usersToGroups.findMany({
-    with: {
-      user: {
-        columns: {
-          id: true,
-          name: true,
-          role: true,
-        },
-      },
+  // const staff = await db.query.usersToGroups.findMany({
+  //   with: {
+  //     user: {
+  //       columns: {
+  //         id: true,
+  //         name: true,
+  //         role: true,
+  //       },
+  //     },
+  //   },
+  // });
+  // const coaches = staff.filter((staff) => staff?.user?.role != "leader");
+  // const uniqueCoaches = [...new Set(coaches.map((coach) => coach?.user?.id))];
+  // return uniqueCoaches;
+  const coaches = await db.query.users.findMany({
+    where: (user, { eq }) => eq(user.role, "coach"),
+    columns: {
+      id: true,
+      name: true,
     },
   });
-  const coaches = staff.filter((staff) => staff?.user?.role != "leader");
-  const uniqueCoaches = [...new Set(coaches.map((coach) => coach?.user?.id))];
-  return uniqueCoaches;
+
+  return coaches;
 };
 
 export const getCoachesWithGroups = async () => {
@@ -108,6 +118,7 @@ export const getCoachesWithGroups = async () => {
     with: {
       groups: true,
     },
+    orderBy: (coach, { asc }) => [asc(coach.name)],
   });
 
   const groups = await db.query.groups.findMany({
@@ -152,6 +163,7 @@ export const getGroupsWithDetails = async () => {
         },
       },
     },
+    orderBy: (group, { asc }) => [asc(group.name)],
   });
   return groups;
 };
@@ -313,6 +325,7 @@ export const getParticipantsWithGroup = async () => {
     with: {
       group: true,
     },
+    orderBy: (participant, { asc }) => [asc(participant.lastName)],
   });
   return participants;
 };
@@ -338,9 +351,13 @@ export const getFemaleParticipantsWithGroup = async () => {
 };
 
 export const getMentors = async () => {
-  const mentors = await db.query.mentors.findMany();
-  const uniqueMentors = [...new Set(mentors.map((mentor) => mentor))];
-  return uniqueMentors;
+  const mentors = await db.query.mentors.findMany({
+    orderBy: (mentor, { asc }) => [asc(mentor.lastName)],
+    with: {
+      participants: true,
+    },
+  });
+  return mentors;
 };
 
 export const getParticipantsWithAttendanceByGroup = async (groupId: string) => {

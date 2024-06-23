@@ -68,7 +68,7 @@ const GroupsPage = async () => {
                   </Link>
                 </TableCell>
                 <TableCell align="center">
-                  {group.gender === "male" ? "M" : "F"}
+                  {group.gender === "male" ? "Male" : "Female"}
                 </TableCell>
                 <TableCell align="center">
                   {group.participants.length}
