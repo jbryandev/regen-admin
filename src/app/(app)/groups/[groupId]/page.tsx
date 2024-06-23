@@ -90,7 +90,7 @@ const GroupsPage = async ({ params }: { params: { groupId: string } }) => {
                 <TableHead className="hidden xl:table-cell">Email</TableHead>
                 <TableHead className="hidden lg:table-cell">Phone</TableHead>
                 <TableHead>Form</TableHead>
-                <TableHead className="hidden text-center sm:table-cell">
+                <TableHead className="hidden text-right sm:table-cell">
                   Mentor
                 </TableHead>
               </TableRow>
