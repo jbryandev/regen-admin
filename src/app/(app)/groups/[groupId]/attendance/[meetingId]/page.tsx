@@ -36,11 +36,8 @@ const AttendancePage = async ({
           <BreadcrumbItem>Attendance</BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="flex items-center justify-between border-b pb-4">
-        <h1 className="text-xl font-semibold md:text-2xl">
-          {/* {currentMeeting?.scheduleItem.name} */}
-          Attendance
-        </h1>
+      <div className="flex flex-wrap items-center justify-between border-b pb-4">
+        <h1 className="text-xl font-semibold md:text-2xl">Attendance</h1>
         <MeetingSelector meetings={meetings} />
       </div>
       <div className="flex items-center gap-6 text-sm text-muted-foreground md:text-base">
