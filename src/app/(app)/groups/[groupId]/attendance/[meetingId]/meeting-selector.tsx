@@ -17,14 +17,12 @@ const MeetingSelector = ({
 }: {
   meetings: MeetingWithScheduleItem[];
 }) => {
-  const params = useParams();
+  const { groupId, meetingId } = useParams();
 
-  const activeMeeting = meetings.find(
-    (meeting) => params.meetingId === meeting.id,
-  );
+  const activeMeeting = meetings.find((meeting) => meetingId === meeting.id);
 
   const handleSelect = (value: string) => {
-    redirect(`/attendance/${value}`);
+    redirect(`/groups/${groupId?.toString()}/attendance/${value}`);
   };
 
   return (

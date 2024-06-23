@@ -61,7 +61,7 @@ const GroupsPage = async ({ params }: { params: { groupId: string } }) => {
           </CardHeader>
           <CardFooter className="flex-none gap-2">
             <Link
-              href={`/schedule/${params.groupId}`}
+              href={`/groups/${params.groupId}/schedule`}
               className={cn(buttonVariants({ variant: "secondary" }), "w-full")}
             >
               Group Schedule
@@ -74,7 +74,7 @@ const GroupsPage = async ({ params }: { params: { groupId: string } }) => {
           <div className="flex items-center justify-between gap-4">
             <CardTitle className="text-xl">Roster</CardTitle>
             <Link
-              href={`/attendance/${currentMeeting?.id}`}
+              href={`/groups/${params.groupId}/attendance/${currentMeeting?.id}`}
               className={buttonVariants({ variant: "secondary" })}
             >
               Take Attendance

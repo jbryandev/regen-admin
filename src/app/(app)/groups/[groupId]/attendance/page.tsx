@@ -4,7 +4,7 @@ import { getCurrentMeeting } from "@/lib/utils";
 import { getServerAuthSession } from "@/server/auth";
 import { getLeaderGroup, getMeetingsForGroup } from "@/server/queries";
 
-const AttendancePage = async () => {
+const AttendancePage = async ({ params }: { params: { groupId: string } }) => {
   const session = await getServerAuthSession();
 
   if (session?.user.role === "leader") {
@@ -12,7 +12,7 @@ const AttendancePage = async () => {
     const meetings = await getMeetingsForGroup(group?.id ?? "");
     const currentMeeting = getCurrentMeeting(meetings);
 
-    redirect(`/attendance/${currentMeeting?.id}`);
+    redirect(`/groups/${params.groupId}/attendance/${currentMeeting?.id}`);
   }
 
   return (

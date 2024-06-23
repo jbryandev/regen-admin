@@ -63,6 +63,31 @@ export function shortDate(date: string) {
   return `${month}/${day}/${year}`;
 }
 
+export const longDate = (date: string) => {
+  // Split the input date string by hyphens
+  const [year, month, day] = date.split("-");
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const monthName = monthNames[parseInt(month ?? "1") - 1];
+
+  // Return the date in MM/DD/YYYY format
+  return `${monthName} ${day}, ${year}`;
+};
+
 export const getOneWeekAheadDate = (date: Date) => {
   const oneWeekAhead = new Date(date);
   oneWeekAhead.setDate(oneWeekAhead.getDate() + 7);

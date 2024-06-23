@@ -3,14 +3,13 @@
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
-import { type Participant } from "@/app/(app)/attendance/[meetingId]/attendance-button";
-import { type MeetingWithScheduleItem } from "@/lib/types";
+import { type Participant, type MeetingWithScheduleItem } from "@/lib/types";
 import { db } from "@/server/db";
 import { attendance } from "@/server/db/schema/app";
 
 export const addAttendance = async (
   meeting: MeetingWithScheduleItem,
-  participant: Participant,
+  participant: Pick<Participant, "id" | "firstName" | "lastName">,
 ) => {
   try {
     await db.insert(attendance).values({

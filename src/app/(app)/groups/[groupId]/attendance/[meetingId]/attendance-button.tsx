@@ -2,27 +2,20 @@
 
 import { Circle, CircleCheck } from "lucide-react";
 import { useOptimistic } from "react";
-import { type z } from "zod";
 
 import {
   addAttendance,
   deleteAttendance,
-} from "@/app/(app)/attendance/[meetingId]/attendance-actions";
+} from "@/app/(app)/groups/[groupId]/attendance/[meetingId]/attendance-actions";
 import { Button } from "@/components/ui/button";
-import { type MeetingWithScheduleItem } from "@/lib/types";
-import { type participantSchema } from "@/server/db/schema/app";
-
-export type Participant = Pick<
-  z.infer<typeof participantSchema>,
-  "id" | "firstName" | "lastName"
->;
+import { type Participant, type MeetingWithScheduleItem } from "@/lib/types";
 
 const AttendanceButton = ({
   participant,
   meeting,
   present,
 }: {
-  participant: Participant;
+  participant: Pick<Participant, "id" | "firstName" | "lastName">;
   meeting: MeetingWithScheduleItem;
   present: boolean;
 }) => {
