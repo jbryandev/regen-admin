@@ -1,16 +1,17 @@
 "use client";
 
-import { redirect, useParams } from "next/navigation";
+import { Calendar, ChevronDown } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { type MeetingWithScheduleItem } from "@/lib/types";
-import { fixedDate } from "@/lib/utils";
+import { longDate, shortDate } from "@/lib/utils";
 
 const MeetingSelector = ({
   meetings,
@@ -18,27 +19,38 @@ const MeetingSelector = ({
   meetings: MeetingWithScheduleItem[];
 }) => {
   const { groupId, meetingId } = useParams();
+  const router = useRouter();
 
   const activeMeeting = meetings.find((meeting) => meetingId === meeting.id);
 
   const handleSelect = (value: string) => {
-    redirect(`/groups/${groupId?.toString()}/attendance/${value}`);
+    router.push(`/groups/${groupId?.toString()}/attendance/${value}`);
   };
 
   return (
-    <Select onValueChange={handleSelect} defaultValue={activeMeeting?.id}>
-      <SelectTrigger className="max-w-64">
-        <SelectValue placeholder="Select a meeting" />
-      </SelectTrigger>
-      <SelectContent>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant={"ghost"}
+          className="flex items-center gap-2 text-sm font-normal text-muted-foreground md:text-base"
+        >
+          <Calendar className="h-4 w-4" />
+          {longDate(activeMeeting?.date ?? "")}
+          <ChevronDown className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
         {meetings.map((meeting) => (
-          <SelectItem key={meeting.id} value={meeting.id}>
-            {fixedDate(meeting.date).toLocaleDateString()} (
-            {meeting.scheduleItem.name})
-          </SelectItem>
+          <DropdownMenuCheckboxItem
+            key={meeting.id}
+            checked={meeting.id === activeMeeting?.id}
+            onSelect={() => handleSelect(meeting.id)}
+          >
+            {shortDate(meeting.date)} - {meeting.scheduleItem.name}
+          </DropdownMenuCheckboxItem>
         ))}
-      </SelectContent>
-    </Select>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
