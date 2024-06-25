@@ -10,6 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { type MeetingWithScheduleItem } from "@/lib/types";
 import { longDate, shortDate } from "@/lib/utils";
 
@@ -39,16 +40,18 @@ const MeetingSelector = ({
           <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        {meetings.map((meeting) => (
-          <DropdownMenuCheckboxItem
-            key={meeting.id}
-            checked={meeting.id === activeMeeting?.id}
-            onSelect={() => handleSelect(meeting.id)}
-          >
-            {shortDate(meeting.date)} - {meeting.scheduleItem.name}
-          </DropdownMenuCheckboxItem>
-        ))}
+      <DropdownMenuContent className="w-72">
+        <ScrollArea className="max-h-[400px] overflow-y-auto">
+          {meetings.map((meeting) => (
+            <DropdownMenuCheckboxItem
+              key={meeting.id}
+              checked={meeting.id === activeMeeting?.id}
+              onSelect={() => handleSelect(meeting.id)}
+            >
+              {shortDate(meeting.date)} - {meeting.scheduleItem.name}
+            </DropdownMenuCheckboxItem>
+          ))}
+        </ScrollArea>
       </DropdownMenuContent>
     </DropdownMenu>
   );
