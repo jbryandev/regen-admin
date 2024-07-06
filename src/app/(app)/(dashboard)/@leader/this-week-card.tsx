@@ -37,7 +37,9 @@ const ThisWeekCard = async ({
             video={currentWeek?.scheduleItem.video}
             title={currentWeek.scheduleItem.name}
           >
-            <Button className="w-full">Watch Training</Button>
+            <Button variant={"secondary"} className="w-full">
+              Watch Training
+            </Button>
           </TrainingVideoPopup>
         )}
       </CardFooter>

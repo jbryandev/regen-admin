@@ -44,7 +44,9 @@ const ChecklistCard = ({ tasks }: { tasks?: Task[] }) => {
         </Table>
       </CardContent>
       <CardFooter>
-        <Button className="w-full">See all tasks</Button>
+        <Button variant={"secondary"} className="w-full">
+          See all tasks
+        </Button>
       </CardFooter>
     </Card>
   );
