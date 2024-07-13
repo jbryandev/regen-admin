@@ -41,8 +41,22 @@ export const updateUserProfile = async (data: UserProfile) => {
     .where(eq(users.id, session.user.id));
 };
 
+/**
+ *
+ * Leaders
+ *
+ */
 export const getLeaders = async () => {
-  const leaders = await db.select().from(users).where(eq(users.role, "leader"));
+  const leaders = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      gender: users.gender,
+      email: users.email,
+      phone: users.phone,
+    })
+    .from(users)
+    .where(eq(users.role, "leader"));
   return leaders;
 };
 
@@ -79,6 +93,24 @@ export const getLeadersWithGroup = async () => {
   return leadersWithGroup;
 };
 
+export const getLeadersFromGroup = async (groupId: string) => {
+  const leaders = await db.query.usersToGroups.findMany({
+    where: (group, { eq }) => eq(group.groupId, groupId),
+    columns: {
+      userId: true,
+    },
+  });
+
+  if (leaders.length === 0) throw new Error("No leaders found");
+
+  return leaders;
+};
+
+/**
+ *
+ * Coaches
+ *
+ */
 export const getCoaches = async () => {
   // const staff = await db.query.usersToGroups.findMany({
   //   with: {
@@ -138,6 +170,94 @@ export const getCoachesWithGroups = async () => {
   return coachesWithGroups;
 };
 
+export const getCoachGroups = async (coachId: string) => {
+  const groups = await db.query.usersToGroups.findMany({
+    where: (group, { eq }) => eq(group.userId, coachId),
+    columns: {
+      groupId: true,
+    },
+    with: {
+      group: {
+        columns: {
+          id: true,
+        },
+      },
+    },
+  });
+
+  if (groups.length === 0) throw new Error("No coach groups found");
+
+  return groups;
+};
+
+export const getCoachGroupsWithDetails = async (coachId: string) => {
+  const groups = await db.query.usersToGroups.findMany({
+    where: (group, { eq }) => eq(group.userId, coachId),
+    columns: {
+      groupId: true,
+    },
+  });
+
+  if (groups.length === 0) throw new Error("No coach groups found");
+
+  const groupIds = groups.map((group) => group.groupId);
+
+  const groupsWithDetails = await db.query.groups.findMany({
+    where: (group, { inArray }) => inArray(group.id, groupIds),
+    columns: {
+      id: true,
+      name: true,
+      gender: true,
+    },
+    with: {
+      meetings: {
+        columns: {
+          date: true,
+        },
+        with: {
+          scheduleItem: {
+            columns: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+      participants: {
+        columns: {
+          id: true,
+        },
+      },
+    },
+    orderBy: (group, { asc }) => [asc(group.name)],
+  });
+
+  return groupsWithDetails;
+};
+
+export const getCoachLeaders = async (coachId: string) => {
+  const leaders = await db.query.usersToGroups.findMany({
+    where: (group, { eq }) => eq(group.userId, coachId),
+    columns: {
+      userId: true,
+    },
+    with: {
+      user: {
+        columns: {
+          id: true,
+          name: true,
+          image: true,
+          email: true,
+          phone: true,
+          role: true,
+        },
+      },
+    },
+  });
+
+  return leaders;
+};
+
 /**
  *
  * Groups
@@ -186,26 +306,6 @@ export const getLeaderGroup = async (leaderId: string) => {
   if (!leaderGroup) throw new Error("No leader group found");
 
   return leaderGroup?.group;
-};
-
-export const getCoachGroups = async (coachId: string) => {
-  const coachGroups = await db.query.usersToGroups.findMany({
-    where: (group, { eq }) => eq(group.userId, coachId),
-    columns: {
-      groupId: true,
-    },
-    with: {
-      group: {
-        columns: {
-          id: true,
-        },
-      },
-    },
-  });
-
-  if (coachGroups.length === 0) throw new Error("No coach groups found");
-
-  return coachGroups;
 };
 
 export const getGroupLeadership = async (groupId: string) => {

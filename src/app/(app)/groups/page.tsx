@@ -11,9 +11,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { type GroupWithDetails } from "@/lib/types";
 import { cn, getCurrentMeeting, shortDate } from "@/lib/utils";
 import { getServerAuthSession } from "@/server/auth";
-import { getGroupsWithDetails, getLeaderGroup } from "@/server/queries";
+import {
+  getCoachGroupsWithDetails,
+  getGroupsWithDetails,
+  getLeaderGroup,
+} from "@/server/queries";
 
 const GroupsPage = async () => {
   const session = await getServerAuthSession();
@@ -23,7 +28,12 @@ const GroupsPage = async () => {
     redirect(`/groups/${group?.id}`);
   }
 
-  const groups = await getGroupsWithDetails();
+  let groups: GroupWithDetails[] = [];
+  if (session?.user.role === ("admin" || "director")) {
+    groups = await getGroupsWithDetails();
+  } else if (session?.user.role === "coach") {
+    groups = await getCoachGroupsWithDetails(session?.user.id);
+  }
 
   return (
     <>
@@ -37,7 +47,7 @@ const GroupsPage = async () => {
             <TableHead className="hidden text-center sm:table-cell">
               Gender
             </TableHead>
-            <TableHead className="hidden text-center xl:table-cell">
+            <TableHead className="hidden text-center sm:table-cell">
               Participants
             </TableHead>
             <TableHead className="hidden text-center lg:table-cell">
@@ -67,10 +77,10 @@ const GroupsPage = async () => {
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                   </Link>
                 </TableCell>
-                <TableCell align="center">
+                <TableCell align="center" className="hidden sm:table-cell">
                   {group.gender === "male" ? "Male" : "Female"}
                 </TableCell>
-                <TableCell align="center">
+                <TableCell align="center" className="hidden sm:table-cell">
                   {group.participants.length}
                 </TableCell>
                 <TableCell align="center" className="hidden lg:table-cell">

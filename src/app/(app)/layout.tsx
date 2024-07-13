@@ -1,23 +1,20 @@
 // import { Search } from "lucide-react";
+import { group } from "console";
+
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import ModeToggle from "@/components/mode-toggle";
-import {
-  MobileNav,
-  type Navigation,
-  SidebarNav,
-  defaultNavigation,
-  leaderNavigation,
-} from "@/components/navigation";
+import { MobileNav, SidebarNav } from "@/components/navigation";
 // import NotificationsMenu from "@/components/notifications-menu";
 // import { Input } from "@/components/ui/input";
-import { buttonVariants } from "@/components/ui/button";
 import UserMenu from "@/components/user-menu";
 import UserSwitcher from "@/components/user-switcher/user-switcher";
+import { type NavigationMenu } from "@/lib/types";
 import regen from "@/public/ReGen_Icon_Primary.png";
 import { getServerAuthSession } from "@/server/auth";
+import { getLeaderGroup } from "@/server/queries";
 
 export const metadata = {
   title: "Regen Admin",
@@ -26,25 +23,24 @@ export const metadata = {
 };
 
 const AppLayout = async ({ children }: { children: React.ReactNode }) => {
-  // Require users to be logged in to access all parts of application
   const session = await getServerAuthSession();
   if (!session?.user) {
     redirect("/login");
   }
 
   const user = {
-    name: session.user.name ?? undefined,
+    name: session.user.name ?? null,
     image: session.user.image ?? null,
   };
 
-  const role = session.user.role;
+  let navigation = {} as NavigationMenu;
 
-  let navigation: Navigation;
-
-  if (role === "leader") {
-    navigation = leaderNavigation;
+  if (session.user.role === "leader") {
+    const group = await getLeaderGroup(session.user.id);
+    if (!group) throw new Error("Group not found");
+    navigation = { type: "leader", group: group?.id };
   } else {
-    navigation = defaultNavigation;
+    navigation = { type: "default" };
   }
 
   return (
@@ -58,13 +54,21 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
             </Link>
           </div>
           <div className="flex-1">
-            <SidebarNav navigation={navigation} />
+            {navigation.type === "leader" ? (
+              <SidebarNav type={navigation.type} groupId={navigation.group} />
+            ) : (
+              <SidebarNav type={navigation.type} />
+            )}
           </div>
         </div>
       </div>
       <div className="flex flex-col">
         <header className="flex h-14 items-center gap-3 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-          <MobileNav navigation={navigation} />
+          {navigation.type === "leader" ? (
+            <MobileNav type={navigation.type} groupId={navigation.group} />
+          ) : (
+            <MobileNav type={navigation.type} />
+          )}
           <div className="w-full flex-1">
             {/* <div className="flex items-center gap-2 font-semibold">
               <p>{user?.name}</p>

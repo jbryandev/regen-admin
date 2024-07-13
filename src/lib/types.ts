@@ -4,6 +4,7 @@ import {
   type scheduleItemSchema,
   type meetingSchema,
   type taskSchema,
+  type groupSchema,
 } from "@/server/db/schema/app";
 import { type userSchema } from "@/server/db/schema/auth";
 
@@ -23,6 +24,8 @@ export type ScheduleItem = z.infer<typeof scheduleItemSchema>;
 
 export type Task = z.infer<typeof taskSchema>;
 
+export type Group = z.infer<typeof groupSchema>;
+
 export type MeetingWithScheduleItem = Meeting & {
   scheduleItem: ScheduleItem;
 };
@@ -37,3 +40,17 @@ export type GroupLeadershipCardProps = Pick<
   z.infer<typeof userSchema>,
   "id" | "name" | "image" | "email" | "phone" | "role"
 > | null;
+
+export type GroupWithDetails = Pick<Group, "id" | "name" | "gender"> & {
+  meetings: Pick<Meeting, "date"> &
+    {
+      scheduleItem: Pick<ScheduleItem, "id" | "name">;
+    }[];
+  participants: Pick<Participant, "id">[];
+};
+
+export type NavigationMenu =
+  | {
+      type: "default";
+    }
+  | { type: "leader"; group: string };

@@ -14,12 +14,12 @@ import { type taskSchema } from "@/server/db/schema/app";
 
 type Task = z.infer<typeof taskSchema>;
 
-const ChecklistCard = ({ tasks }: { tasks?: Task[] }) => {
+const TaskCard = ({ tasks }: { tasks?: Task[] }) => {
   return (
     <Card className="order-3 col-span-2 flex flex-col justify-between xl:order-2">
       <CardHeader className="flex-none">
         <CardDescription className="flex flex-row items-center justify-between space-y-0">
-          Checklist
+          Tasks
           <ListChecks className="h-4 w-4 text-muted-foreground" />
         </CardDescription>
       </CardHeader>
@@ -52,4 +52,4 @@ const ChecklistCard = ({ tasks }: { tasks?: Task[] }) => {
   );
 };
 
-export default ChecklistCard;
+export default TaskCard;

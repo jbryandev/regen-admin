@@ -1,8 +1,8 @@
 import parsePhoneNumberFromString from "libphonenumber-js";
 import Link from "next/link";
 
-import ChecklistCard from "@/app/(app)/(dashboard)/@leader/checklist-card";
 import MemoryVerseCard from "@/app/(app)/(dashboard)/@leader/memory-verse-card";
+import TaskCard from "@/app/(app)/(dashboard)/@leader/task-card";
 import ThisWeekCard from "@/app/(app)/(dashboard)/@leader/this-week-card";
 import AttendanceSummary from "@/components/attendance-summary";
 import { buttonVariants } from "@/components/ui/button";
@@ -51,7 +51,7 @@ const LeaderDashboard = async () => {
     <>
       <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 md:gap-8 xl:grid-cols-4">
         <ThisWeekCard currentWeek={currentWeek} />
-        <ChecklistCard tasks={tasks} />
+        <TaskCard tasks={tasks} />
         <MemoryVerseCard step={currentWeek?.scheduleItem.step ?? 0} />
       </div>
       <Card>

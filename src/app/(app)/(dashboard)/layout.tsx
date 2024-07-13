@@ -4,9 +4,19 @@ type DashboardProps = {
   children: React.ReactNode;
   leader: React.ReactNode;
   admin: React.ReactNode;
+  director: React.ReactNode;
+  coach: React.ReactNode;
+  tech: React.ReactNode;
 };
 
-const DashboardLayout = async ({ children, leader, admin }: DashboardProps) => {
+const DashboardLayout = async ({
+  children,
+  leader,
+  admin,
+  director,
+  coach,
+  tech,
+}: DashboardProps) => {
   const session = await getServerAuthSession();
   const role = session?.user.role ?? "";
 
@@ -18,6 +28,9 @@ const DashboardLayout = async ({ children, leader, admin }: DashboardProps) => {
       {children}
       {role === "leader" && leader}
       {role === "admin" && admin}
+      {role === "director" && director}
+      {role === "coach" && coach}
+      {role === "tech" && tech}
     </main>
   );
 };
