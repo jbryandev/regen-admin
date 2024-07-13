@@ -112,20 +112,6 @@ export const getLeadersFromGroup = async (groupId: string) => {
  *
  */
 export const getCoaches = async () => {
-  // const staff = await db.query.usersToGroups.findMany({
-  //   with: {
-  //     user: {
-  //       columns: {
-  //         id: true,
-  //         name: true,
-  //         role: true,
-  //       },
-  //     },
-  //   },
-  // });
-  // const coaches = staff.filter((staff) => staff?.user?.role != "leader");
-  // const uniqueCoaches = [...new Set(coaches.map((coach) => coach?.user?.id))];
-  // return uniqueCoaches;
   const coaches = await db.query.users.findMany({
     where: (user, { eq }) => eq(user.role, "coach"),
     columns: {
@@ -233,6 +219,47 @@ export const getCoachGroupsWithDetails = async (coachId: string) => {
   });
 
   return groupsWithDetails;
+};
+
+export const getCoachDashboardStats = async (coachId: string) => {
+  const groups = await db.query.usersToGroups.findMany({
+    where: (group, { eq }) => eq(group.userId, coachId),
+    columns: {
+      groupId: true,
+    },
+  });
+
+  const groupIds = groups.map((group) => group.groupId);
+
+  const leaders = await db.query.usersToGroups.findMany({
+    where: (group, { inArray }) => inArray(group.groupId, groupIds),
+    columns: {
+      userId: true,
+    },
+  });
+
+  const leaderIds = leaders
+    .filter((leader) => leader.userId != coachId)
+    .map((leader) => leader.userId);
+
+  const participants = await db.query.participants.findMany({
+    where: (participant, { inArray }) => inArray(participant.groupId, groupIds),
+    columns: {
+      id: true,
+      mentorId: true,
+    },
+  });
+
+  const participantIds = participants.map((participant) => participant.id);
+
+  const mentorIds = participants.map((participant) => participant.mentorId);
+
+  return {
+    groupIds,
+    leaderIds,
+    participantIds,
+    mentorIds,
+  };
 };
 
 export const getCoachLeaders = async (coachId: string) => {

@@ -11,24 +11,16 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { getServerAuthSession } from "@/server/auth";
-import {
-  getCoachGroups,
-  getCoachLeaders,
-  getMentors,
-  getParticipants,
-} from "@/server/queries";
+import { getCoachDashboardStats } from "@/server/queries";
 
 const CoachDashboard = async () => {
   const session = await getServerAuthSession();
   const coachId = session?.user?.id;
 
-  if (!coachId) return <div>Unauthorized</div>;
+  if (!coachId) throw new Error("Unauthorized");
 
-  const groups = await getCoachGroups(coachId);
-  const leaders = await getCoachLeaders(coachId);
-
-  const participants = await getParticipants();
-  const mentors = await getMentors();
+  const { groupIds, leaderIds, participantIds, mentorIds } =
+    await getCoachDashboardStats(coachId);
 
   return (
     <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 md:gap-8 xl:grid-cols-3 2xl:grid-cols-4">
@@ -38,7 +30,7 @@ const CoachDashboard = async () => {
             Groups
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardDescription>
-          <CardTitle className="text-3xl">{groups.length}</CardTitle>
+          <CardTitle className="text-3xl">{groupIds.length}</CardTitle>
         </CardHeader>
         <CardFooter className="flex-none gap-2">
           <Link
@@ -55,7 +47,7 @@ const CoachDashboard = async () => {
             Participants
             <User className="h-4 w-4 text-muted-foreground" />
           </CardDescription>
-          <CardTitle className="text-3xl">{participants.length}</CardTitle>
+          <CardTitle className="text-3xl">{participantIds.length}</CardTitle>
         </CardHeader>
         <CardFooter className="flex-none gap-2">
           <Link
@@ -72,7 +64,7 @@ const CoachDashboard = async () => {
             Leaders
             <Star className="h-4 w-4 text-muted-foreground" />
           </CardDescription>
-          <CardTitle className="text-3xl">{leaders.length}</CardTitle>
+          <CardTitle className="text-3xl">{leaderIds.length}</CardTitle>
         </CardHeader>
         <CardFooter className="flex-none gap-2">
           <Link
@@ -89,7 +81,7 @@ const CoachDashboard = async () => {
             Mentors
             <HeartHandshake className="h-4 w-4 text-muted-foreground" />
           </CardDescription>
-          <CardTitle className="text-3xl">{mentors.length}</CardTitle>
+          <CardTitle className="text-3xl">{mentorIds.length}</CardTitle>
         </CardHeader>
         <CardFooter className="flex-none gap-2">
           <Link
