@@ -1,6 +1,4 @@
-// import { Search } from "lucide-react";
-import { group } from "console";
-
+import { Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -8,7 +6,7 @@ import { redirect } from "next/navigation";
 import ModeToggle from "@/components/mode-toggle";
 import { MobileNav, SidebarNav } from "@/components/navigation";
 // import NotificationsMenu from "@/components/notifications-menu";
-// import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/input";
 import UserMenu from "@/components/user-menu";
 import UserSwitcher from "@/components/user-switcher/user-switcher";
 import { type NavigationMenu } from "@/lib/types";
@@ -70,13 +68,7 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
             <MobileNav type={navigation.type} />
           )}
           <div className="w-full flex-1">
-            {/* <div className="flex items-center gap-2 font-semibold">
-              <p>{user?.name}</p>
-              <span className={buttonVariants({ variant: "secondary" })}>
-                {role}
-              </span>
-            </div> */}
-            {/* <form>
+            <form>
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -86,7 +78,7 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
                   disabled={true}
                 />
               </div>
-            </form> */}
+            </form>
           </div>
           {/* <NotificationsMenu /> */}
           <ModeToggle />
