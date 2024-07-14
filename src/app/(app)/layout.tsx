@@ -3,9 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import MobileNav from "@/components/mobile-nav";
 import ModeToggle from "@/components/mode-toggle";
-import { MobileNav, SidebarNav } from "@/components/navigation";
 // import NotificationsMenu from "@/components/notifications-menu";
+import SidebarNav from "@/components/sidebar-nav";
 import { Input } from "@/components/ui/input";
 import UserMenu from "@/components/user-menu";
 import UserSwitcher from "@/components/user-switcher/user-switcher";
@@ -29,16 +30,14 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
   const user = {
     name: session.user.name ?? null,
     image: session.user.image ?? null,
+    role: session.user.role ?? null,
   };
 
-  let navigation = {} as NavigationMenu;
-
-  if (session.user.role === "leader") {
+  let groupId = "";
+  if (user.role === "leader") {
     const group = await getLeaderGroup(session.user.id);
-    if (!group) throw new Error("Group not found");
-    navigation = { type: "leader", group: group?.id };
-  } else {
-    navigation = { type: "default" };
+    if (!group) throw new Error("Leader group not found");
+    groupId = group.id;
   }
 
   return (
@@ -52,21 +51,19 @@ const AppLayout = async ({ children }: { children: React.ReactNode }) => {
             </Link>
           </div>
           <div className="flex-1">
-            {navigation.type === "leader" ? (
-              <SidebarNav type={navigation.type} groupId={navigation.group} />
-            ) : (
-              <SidebarNav type={navigation.type} />
-            )}
+            <SidebarNav
+              variant={user.role as NavigationMenu["variant"]}
+              groupId={groupId}
+            />
           </div>
         </div>
       </div>
       <div className="flex flex-col">
         <header className="flex h-14 items-center gap-3 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-          {navigation.type === "leader" ? (
-            <MobileNav type={navigation.type} groupId={navigation.group} />
-          ) : (
-            <MobileNav type={navigation.type} />
-          )}
+          <MobileNav
+            variant={user.role as NavigationMenu["variant"]}
+            groupId={groupId}
+          />
           <div className="w-full flex-1">
             <form>
               <div className="relative">

@@ -28,7 +28,7 @@ const GroupsPage = async () => {
     redirect(`/groups/${group?.id}`);
   }
 
-  let groups: GroupWithDetails[] = [];
+  let groups: Array<GroupWithDetails> = [];
   if (session?.user.role === ("admin" || "director")) {
     groups = await getGroupsWithDetails();
   } else if (session?.user.role === "coach") {

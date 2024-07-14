@@ -1,3 +1,4 @@
+import { type LucideIcon } from "lucide-react";
 import { type z } from "zod";
 
 import {
@@ -18,6 +19,8 @@ export type Participant = {
   age: number;
 };
 
+export type User = z.infer<typeof userSchema>;
+
 export type Meeting = z.infer<typeof meetingSchema>;
 
 export type ScheduleItem = z.infer<typeof scheduleItemSchema>;
@@ -32,7 +35,7 @@ export type MeetingWithScheduleItem = Meeting & {
 
 export type MeetingWithScheduleItemAndTasks = Meeting & {
   scheduleItem: ScheduleItem & {
-    tasks: Task[];
+    tasks: Array<Task>;
   };
 };
 
@@ -42,15 +45,20 @@ export type GroupLeadershipCardProps = Pick<
 > | null;
 
 export type GroupWithDetails = Pick<Group, "id" | "name" | "gender"> & {
-  meetings: Pick<Meeting, "date"> &
-    {
+  participants: Array<Pick<Participant, "id">>;
+  meetings: Array<
+    Pick<Meeting, "date"> & {
       scheduleItem: Pick<ScheduleItem, "id" | "name">;
-    }[];
-  participants: Pick<Participant, "id">[];
+    }
+  >;
 };
 
 export type NavigationMenu =
-  | {
-      type: "default";
-    }
-  | { type: "leader"; group: string };
+  | { variant: Exclude<User["role"], "leader"> }
+  | { variant: "leader"; groupId: string };
+
+export type NavigationMenuItem = {
+  title: string;
+  icon: LucideIcon;
+  path: string;
+};

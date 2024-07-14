@@ -186,7 +186,9 @@ export const getCoachGroupsWithDetails = async (coachId: string) => {
 
   if (groups.length === 0) throw new Error("No coach groups found");
 
-  const groupIds = groups.map((group) => group.groupId);
+  const groupIds = groups
+    .map((group) => group.groupId)
+    .filter((groupId) => groupId != null);
 
   const groupsWithDetails = await db.query.groups.findMany({
     where: (group, { inArray }) => inArray(group.id, groupIds),
@@ -229,7 +231,9 @@ export const getCoachDashboardStats = async (coachId: string) => {
     },
   });
 
-  const groupIds = groups.map((group) => group.groupId);
+  const groupIds = groups
+    .map((group) => group.groupId)
+    .filter((groupId) => groupId != null);
 
   const leaders = await db.query.usersToGroups.findMany({
     where: (group, { inArray }) => inArray(group.groupId, groupIds),
@@ -297,16 +301,28 @@ export const getGroups = async () => {
 
 export const getGroupsWithDetails = async () => {
   const groups = await db.query.groups.findMany({
+    columns: {
+      id: true,
+      name: true,
+      gender: true,
+    },
     with: {
       meetings: {
+        columns: {
+          date: true,
+        },
         with: {
-          scheduleItem: true,
+          scheduleItem: {
+            columns: {
+              id: true,
+              name: true,
+            },
+          },
         },
       },
-      participants: true,
-      users: {
-        with: {
-          user: true,
+      participants: {
+        columns: {
+          id: true,
         },
       },
     },

@@ -101,12 +101,12 @@ export const getOneDayBehindDate = (date: Date) => {
 };
 
 export const filterOutCancelledMeetings = (
-  meetings: MeetingWithScheduleItem[],
+  meetings: Array<MeetingWithScheduleItem>,
 ) => {
   return meetings.filter((meeting) => !meeting.scheduleItem.isCancelled);
 };
 
-export const getRecentMeetings = (meetings: MeetingWithScheduleItem[]) => {
+export const getRecentMeetings = (meetings: Array<MeetingWithScheduleItem>) => {
   return meetings
     .filter(
       (meeting) =>
@@ -117,7 +117,7 @@ export const getRecentMeetings = (meetings: MeetingWithScheduleItem[]) => {
     .map((meeting) => meeting.date);
 };
 
-export const getCurrentMeeting = (meetings: MeetingWithScheduleItem[]) => {
+export const getCurrentMeeting = (meetings: Array<MeetingWithScheduleItem>) => {
   return meetings.find(
     (meeting) =>
       meeting.date >=
