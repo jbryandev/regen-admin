@@ -41,8 +41,8 @@ export type MeetingWithScheduleItemAndTasks = Meeting & {
 
 export type GroupLeadershipCardProps = Pick<
   z.infer<typeof userSchema>,
-  "id" | "name" | "image" | "email" | "phone" | "role"
-> | null;
+  "id" | "name" | "image" | "email" | "role"
+> & { phone: string | null };
 
 export type GroupWithDetails = Pick<Group, "id" | "name" | "gender"> & {
   participants: Array<Pick<Participant, "id">>;

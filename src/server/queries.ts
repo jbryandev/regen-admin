@@ -418,11 +418,13 @@ export const getGroupLeadership = async (groupId: string) => {
 
   const leaders = leadership
     .filter((leader) => leader?.user?.role === "leader")
-    .map((leader) => leader.user);
+    .map((leader) => leader.user)
+    .filter((leader) => leader != null);
 
   const coaches = leadership
     .filter((coach) => coach?.user?.role != "leader")
-    .map((coach) => coach.user);
+    .map((coach) => coach.user)
+    .filter((coach) => coach != null);
 
   return { leaders, coaches };
 };
