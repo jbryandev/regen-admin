@@ -13,14 +13,20 @@ import {
 } from "@/components/ui/table";
 import { cn, prettyPhone } from "@/lib/utils";
 import { getServerAuthSession } from "@/server/auth";
-import { getLeadersWithGroup } from "@/server/queries";
+import {
+  getCoachLeadersWithGroup,
+  getLeadersWithGroup,
+} from "@/server/queries";
 
 const LeadersPage = async () => {
   const session = await getServerAuthSession();
+  if (!session) redirect("/");
 
   let leaders = [];
-  if (session?.user.role === "admin" || session?.user.role === "director") {
+  if (session.user.role === "admin" || session.user.role === "director") {
     leaders = await getLeadersWithGroup();
+  } else if (session?.user.role === "coach") {
+    leaders = await getCoachLeadersWithGroup(session.user.id);
   } else {
     redirect("/");
   }

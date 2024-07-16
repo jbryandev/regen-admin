@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { prettyPhone } from "@/lib/utils";
 import { getServerAuthSession } from "@/server/auth";
-import { getMentors } from "@/server/queries";
+import { getCoachMentors, getMentors } from "@/server/queries";
 
 const MentorsPage = async () => {
   const session = await getServerAuthSession();
@@ -18,6 +18,8 @@ const MentorsPage = async () => {
   let mentors = [];
   if (session?.user.role === "admin" || session?.user.role === "director") {
     mentors = await getMentors();
+  } else if (session?.user.role === "coach") {
+    mentors = await getCoachMentors(session.user.id);
   } else {
     redirect("/");
   }

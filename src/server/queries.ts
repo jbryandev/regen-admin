@@ -1,4 +1,4 @@
-import { and, eq, lte } from "drizzle-orm";
+import { and, eq, inArray, lte } from "drizzle-orm";
 import { type z } from "zod";
 
 import { getServerAuthSession } from "@/server/auth";
@@ -93,6 +93,48 @@ export const getLeadersWithGroup = async () => {
   return leadersWithGroup;
 };
 
+export const getCoachLeadersWithGroup = async (coachId: string) => {
+  const coachGroups = await getCoachGroups(coachId);
+
+  const groupIds = coachGroups
+    .map((group) => group.groupId)
+    .filter((groupId) => groupId != null);
+
+  const groupLeaders = await db.query.usersToGroups.findMany({
+    where: (group, { inArray }) => inArray(group.groupId, groupIds),
+    columns: {
+      userId: true,
+      groupId: true,
+    },
+  });
+
+  const userIds = groupLeaders
+    .map((user) => user.userId)
+    .filter((id) => id != null);
+
+  const leaders = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      gender: users.gender,
+      email: users.email,
+      phone: users.phone,
+    })
+    .from(users)
+    .where(and(inArray(users.id, userIds), eq(users.role, "leader")));
+
+  const leadersWithGroup = leaders.map((leader) => {
+    const groupId = groupLeaders.find(
+      (group) => group.userId === leader.id,
+    )?.groupId;
+
+    const group = coachGroups.find((group) => group.groupId === groupId)?.group;
+    return { ...leader, group };
+  });
+
+  return leadersWithGroup;
+};
+
 export const getLeadersFromGroup = async (groupId: string) => {
   const leaders = await db.query.usersToGroups.findMany({
     where: (group, { eq }) => eq(group.groupId, groupId),
@@ -166,6 +208,7 @@ export const getCoachGroups = async (coachId: string) => {
       group: {
         columns: {
           id: true,
+          name: true,
         },
       },
     },
@@ -473,6 +516,21 @@ export const getParticipantsWithGroup = async () => {
   return participants;
 };
 
+export const getCoachParticipantsWithGroup = async (coachId: string) => {
+  const groups = await getCoachGroups(coachId);
+  const groupIds = groups
+    .map((group) => group.groupId)
+    .filter((groupId) => groupId != null);
+  const participants = await db.query.participants.findMany({
+    where: (participant, { inArray }) => inArray(participant.groupId, groupIds),
+    with: {
+      group: true,
+    },
+    orderBy: (participant, { asc }) => [asc(participant.lastName)],
+  });
+  return participants;
+};
+
 export const getMaleParticipantsWithGroup = async () => {
   const participants = await db.query.participants.findMany({
     where: (participant, { eq }) => eq(participant.gender, "male"),
@@ -495,6 +553,23 @@ export const getFemaleParticipantsWithGroup = async () => {
 
 export const getMentors = async () => {
   const mentors = await db.query.mentors.findMany({
+    orderBy: (mentor, { asc }) => [asc(mentor.lastName)],
+    with: {
+      participants: true,
+    },
+  });
+  return mentors;
+};
+
+export const getCoachMentors = async (coachId: string) => {
+  const participants = await getCoachParticipantsWithGroup(coachId);
+
+  const mentorIds = participants
+    .map((participant) => participant.mentorId)
+    .filter((mentorId) => mentorId != null);
+
+  const mentors = await db.query.mentors.findMany({
+    where: (mentor, { inArray }) => inArray(mentor.id, mentorIds),
     orderBy: (mentor, { asc }) => [asc(mentor.lastName)],
     with: {
       participants: true,
