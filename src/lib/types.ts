@@ -6,6 +6,7 @@ import {
   type meetingSchema,
   type taskSchema,
   type groupSchema,
+  type songSchema,
 } from "@/server/db/schema/app";
 import { type userSchema } from "@/server/db/schema/auth";
 
@@ -62,3 +63,5 @@ export type NavigationMenuItem = {
   icon: LucideIcon;
   path: string;
 };
+
+export type Song = z.infer<typeof songSchema>;

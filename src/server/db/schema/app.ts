@@ -1,3 +1,5 @@
+import { title } from "process";
+
 import { relations } from "drizzle-orm";
 import {
   boolean,
@@ -12,7 +14,11 @@ import { createSelectSchema } from "drizzle-zod";
 import { createTable, genderEnum } from "@/server/db/schema";
 import { users } from "@/server/db/schema/auth";
 
-// Table definitions
+/**
+ *
+ * TABLE DEFINITIONS
+ *
+ */
 export const participants = createTable("participant", {
   id: uuid("id").defaultRandom().primaryKey(),
   firstName: varchar("first_name", { length: 255 }).notNull(),
@@ -133,7 +139,30 @@ export const verses = createTable("verse", {
   text: text("text").notNull(),
 });
 
-// Relations
+export const songs = createTable("song", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  artist: varchar("artist", { length: 255 }).notNull(),
+  duration: varchar("duration", { length: 10 }).notNull(),
+  youtubeId: varchar("youtubeId", { length: 15 }),
+});
+
+export const setlists = createTable("setlist", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+});
+
+export const setlistSongs = createTable("setlist_songs", {
+  setlistId: uuid("setlist_id").references(() => setlists.id),
+  songId: uuid("song_id").references(() => songs.id),
+});
+
+/**
+ *
+ * RELATIONS
+ *
+ */
 export const participantRelations = relations(
   participants,
   ({ one, many }) => ({
@@ -232,7 +261,22 @@ export const taskRelations = relations(tasks, ({ one }) => ({
   }),
 }));
 
-// Schema
+export const setlistSongRelations = relations(setlistSongs, ({ one }) => ({
+  song: one(songs, {
+    fields: [setlistSongs.songId],
+    references: [songs.id],
+  }),
+  setlist: one(setlists, {
+    fields: [setlistSongs.setlistId],
+    references: [setlists.id],
+  }),
+}));
+
+/**
+ *
+ * SCHEMA
+ *
+ */
 export const participantSchema = createSelectSchema(participants);
 export const mentorSchema = createSelectSchema(mentors);
 export const groupSchema = createSelectSchema(groups);
@@ -247,3 +291,4 @@ export const participantToStruggleSchema = createSelectSchema(
 export const userToGroupSchema = createSelectSchema(usersToGroups);
 export const verseSchema = createSelectSchema(verses);
 export const taskSchema = createSelectSchema(tasks);
+export const songSchema = createSelectSchema(songs);
