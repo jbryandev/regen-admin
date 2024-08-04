@@ -646,3 +646,46 @@ export const getParticipantDetailsByGroup = async (groupId: string) => {
 
   return participants;
 };
+
+/**
+ *
+ * Worship
+ *
+ */
+export const getAvailableSongs = async () => {
+  const songs = await db.query.songs.findMany({
+    orderBy: (song, { asc }) => [asc(song.title)],
+  });
+
+  return songs;
+};
+
+export const getSetlists = async () => {
+  const setlists = await db.query.setlists.findMany();
+  return setlists;
+};
+
+export const getActiveSetlist = async () => {
+  const activeSetlist = await db.query.setlists.findFirst({
+    where: (setlist, { isNotNull }) => isNotNull(setlist.id),
+  });
+  return activeSetlist;
+};
+
+export const getSetlistSongs = async (setlistId: string) => {
+  const result = await db.query.setlistSongs.findMany({
+    where: (song, { eq }) => eq(song.setlistId, setlistId),
+  });
+
+  if (result.length === 0) return [];
+
+  const songIds = result
+    .map((song) => song.songId)
+    .filter((songId) => songId != null);
+
+  const songs = await db.query.songs.findMany({
+    where: (song, { inArray }) => inArray(song.id, songIds),
+  });
+
+  return songs;
+};

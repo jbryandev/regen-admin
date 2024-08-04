@@ -292,3 +292,4 @@ export const userToGroupSchema = createSelectSchema(usersToGroups);
 export const verseSchema = createSelectSchema(verses);
 export const taskSchema = createSelectSchema(tasks);
 export const songSchema = createSelectSchema(songs);
+export const setlistSchema = createSelectSchema(setlists);

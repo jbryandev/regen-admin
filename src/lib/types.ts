@@ -7,6 +7,7 @@ import {
   type taskSchema,
   type groupSchema,
   type songSchema,
+  type setlistSchema,
 } from "@/server/db/schema/app";
 import { type userSchema } from "@/server/db/schema/auth";
 
@@ -65,3 +66,5 @@ export type NavigationMenuItem = {
 };
 
 export type Song = z.infer<typeof songSchema>;
+
+export type Setlist = z.infer<typeof setlistSchema>;
