@@ -482,6 +482,7 @@ export const getMeetingsForAttendance = async (groupId: string) => {
     with: {
       scheduleItem: true,
     },
+    orderBy: (meeting, { asc }) => [asc(meeting.date)],
   });
 
   if (meetings.length === 0) throw new Error("No meetings found");
@@ -667,7 +668,7 @@ export const getSetlists = async () => {
 
 export const getActiveSetlist = async () => {
   const activeSetlist = await db.query.setlists.findFirst({
-    where: (setlist, { isNotNull }) => isNotNull(setlist.id),
+    where: (setlist, { eq }) => eq(setlist.isActive, true),
   });
   return activeSetlist;
 };

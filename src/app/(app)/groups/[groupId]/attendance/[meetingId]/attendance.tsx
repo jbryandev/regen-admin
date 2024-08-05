@@ -16,6 +16,7 @@ const Attendance = async ({
       firstName: true,
       lastName: true,
     },
+    orderBy: (participant, { asc }) => [asc(participant.lastName)],
   });
 
   return meeting.scheduleItem.isCancelled ? (

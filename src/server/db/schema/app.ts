@@ -1,5 +1,3 @@
-import { title } from "process";
-
 import { relations } from "drizzle-orm";
 import {
   boolean,
@@ -51,7 +49,7 @@ export const participantsToStruggles = createTable(
   {
     participantId: uuid("participant_id")
       .notNull()
-      .references(() => participants.id),
+      .references(() => participants.id, { onDelete: "cascade" }),
     struggleId: uuid("struggle_id")
       .notNull()
       .references(() => struggles.id),
@@ -96,7 +94,7 @@ export const attendance = createTable("attendance", {
     })
     .notNull(),
   participantId: uuid("participant_id")
-    .references(() => participants.id)
+    .references(() => participants.id, { onDelete: "cascade" })
     .notNull(),
 });
 
@@ -151,6 +149,7 @@ export const setlists = createTable("setlist", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
+  isActive: boolean("is_active").default(false).notNull(),
 });
 
 export const setlistSongs = createTable("setlist_songs", {
