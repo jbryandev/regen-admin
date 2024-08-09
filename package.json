@@ -19,6 +19,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^3.9.0",
     "@payloadcms/db-postgres": "3.0.0-beta.73",
+    "@payloadcms/email-resend": "3.0.0-beta.73",
     "@payloadcms/next": "3.0.0-beta.73",
     "@payloadcms/plugin-cloud": "3.0.0-beta.73",
     "@payloadcms/richtext-lexical": "3.0.0-beta.73",
