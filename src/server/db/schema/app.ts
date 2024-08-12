@@ -143,6 +143,7 @@ export const songs = createTable("song", {
   artist: varchar("artist", { length: 255 }).notNull(),
   duration: varchar("duration", { length: 10 }).notNull(),
   youtubeId: varchar("youtubeId", { length: 15 }),
+  captions: boolean("captions").notNull().default(false),
 });
 
 export const setlists = createTable("setlist", {
