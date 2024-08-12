@@ -17,10 +17,10 @@ const CoachDashboard = async () => {
   const session = await getServerAuthSession();
   const coachId = session?.user?.id;
 
-  if (!coachId) throw new Error("Unauthorized");
+  // if (!coachId) throw new Error("Unauthorized");
 
   const { groupIds, leaderIds, participantIds, mentorIds } =
-    await getCoachDashboardStats(coachId);
+    await getCoachDashboardStats(coachId || "");
 
   return (
     <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 md:gap-8 xl:grid-cols-3 2xl:grid-cols-4">

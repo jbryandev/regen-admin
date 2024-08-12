@@ -24,7 +24,7 @@ import "@/styles/globals.css";
 export const metadata = {
   title: "Regen Admin",
   description: "Administration site for Re:Generation",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/favicon.svg" }],
 };
 
 const inter = Inter({

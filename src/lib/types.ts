@@ -68,3 +68,8 @@ export type NavigationMenuItem = {
 export type Song = z.infer<typeof songSchema>;
 
 export type Setlist = z.infer<typeof setlistSchema>;
+
+export type LoginFormData = {
+  email: string;
+  password: string;
+};
