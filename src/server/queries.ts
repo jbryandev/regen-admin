@@ -6,6 +6,7 @@ import { db } from "@/server/db";
 import { type userProfileSchema, users } from "@/server/db/schema/auth";
 
 import "server-only";
+import { type Song } from "@/lib/types";
 
 /**
  *
@@ -676,6 +677,7 @@ export const getActiveSetlist = async () => {
 export const getSetlistSongs = async (setlistId: string) => {
   const result = await db.query.setlistSongs.findMany({
     where: (song, { eq }) => eq(song.setlistId, setlistId),
+    orderBy: (song, { asc }) => [asc(song.dateAdded)],
   });
 
   if (result.length === 0) return [];
@@ -684,9 +686,15 @@ export const getSetlistSongs = async (setlistId: string) => {
     .map((song) => song.songId)
     .filter((songId) => songId != null);
 
-  const songs = await db.query.songs.findMany({
-    where: (song, { inArray }) => inArray(song.id, songIds),
-  });
+  const songs = Array<Song>();
+
+  for (const songId of songIds) {
+    const song = await db.query.songs.findFirst({
+      where: (song, { eq }) => eq(song.id, songId),
+    });
+    if (!song) throw new Error("Song not found");
+    songs.push(song);
+  }
 
   return songs;
 };

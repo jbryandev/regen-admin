@@ -4,6 +4,7 @@ import {
   date,
   integer,
   text,
+  timestamp,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -156,6 +157,7 @@ export const setlists = createTable("setlist", {
 export const setlistSongs = createTable("setlist_songs", {
   setlistId: uuid("setlist_id").references(() => setlists.id),
   songId: uuid("song_id").references(() => songs.id),
+  dateAdded: timestamp("date_added").notNull().defaultNow(),
 });
 
 /**
